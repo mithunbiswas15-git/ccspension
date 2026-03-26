@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pensionary Benefits Calculator</title>
+    <title>Pensionary Benefits & Leave Encashment Calculator</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7f9; color: #333; margin: 0; padding: 20px; padding-bottom: 80px; }
         .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -18,15 +18,17 @@
         .divider { height: 2px; background: #eee; margin: 30px 0; }
         .highlight-box { padding: 15px; border-radius: 8px; border-left: 5px solid #2e7d32; background-color: #e8f5e9; margin-bottom: 10px; font-weight: bold; }
         .family-box { padding: 15px; border-radius: 8px; border-left: 5px solid #1565c0; background-color: #e3f2fd; margin-bottom: 10px; font-weight: bold; }
-        .payable-box { background-color: #c8e6c9; border-left-color: #1b5e20; }
-        .footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #f0f2f6; color: #555; text-align: center; padding: 10px; font-size: 14px; border-top: 1px solid #ddd; }
-        .results-section { display: none; }
+        .leave-box { padding: 15px; border-radius: 8px; border-left: 5px solid #ed6c02; background-color: #fff3e0; margin-bottom: 10px; font-weight: bold; }
+        .payable-box { background-color: #c8e6c9 !important; border-left-color: #1b5e20 !important; }
+        .footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #f0f2f6; color: #555; text-align: center; padding: 10px; font-size: 14px; border-top: 1px solid #ddd; z-index: 1000; }
+        .results-section { display: none; margin-top: 20px; }
+        h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏦 Pensionary Benefits Calculator</h1>
+    <h1>🏦 Pensionary Benefits & Leave Encashment</h1>
     <p class="subtext">Created by: Mithun Biswas, Executive Assistant, Pension Cell, CGST & C.Ex. Mumbai Central</p>
 
     <div class="grid">
@@ -36,10 +38,6 @@
                 <input type="text" id="name" placeholder="Enter name">
             </div>
             <div class="input-group">
-                <label>Designation</label>
-                <input type="text" id="designation" placeholder="Enter designation">
-            </div>
-            <div class="input-group">
                 <label>Type of Retirement</label>
                 <select id="retType" onchange="calculateDefaultDOR()">
                     <option value="Superannuation">Superannuation</option>
@@ -47,14 +45,23 @@
                     <option value="Compulsory Retirement">Compulsory Retirement</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label>Date of Birth</label>
+                <input type="date" id="dob" value="1965-10-03" min="1950-01-01" onchange="calculateDefaultDOR()">
+            </div>
+            <div class="input-group">
+                <label>Date of Retirement</label>
+                <input type="date" id="dor" min="1950-01-01">
+            </div>
         </div>
+
         <div class="col">
             <div class="input-group">
                 <label>Basic Pay (Rs.)</label>
                 <input type="number" id="basicPay" value="0">
             </div>
             <div class="input-group">
-                <label>Current DA/DR (%)</label>
+                <label>Current DA Rate (%)</label>
                 <input type="number" id="daPercent" value="0" step="0.1">
             </div>
             <div class="input-group">
@@ -62,26 +69,27 @@
                 <input type="range" id="commPercent" min="0" max="40" value="0" oninput="this.nextElementSibling.value = this.value">
                 <output>0</output>%
             </div>
-        </div>
-        <div class="col">
-            <div class="input-group">
-                <label>Date of Birth</label>
-                <input type="date" id="dob" value="1965-10-03" min="1950-01-01" onchange="calculateDefaultDOR()">
-            </div>
-            <div class="input-group">
-                <label>Date of Entry</label>
-                <input type="date" id="doj" value="1995-01-01" min="1950-01-01" onchange="calculateDefaultDOR()">
-            </div>
-            <div class="input-group">
-                <label>Date of Retirement</label>
-                <input type="date" id="dor" min="1950-01-01">
-            </div>
             <div class="input-group">
                 <label>Govt. Accommodation?</label>
                 <select id="govtAcc">
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                 </select>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="input-group">
+                <label>Date of Entry</label>
+                <input type="date" id="doj" value="1995-01-01" min="1950-01-01" onchange="calculateDefaultDOR()">
+            </div>
+            <div class="input-group">
+                <label>EL Balance (on D.O.R.)</label>
+                <input type="number" id="elBalance" value="0" placeholder="Earned Leave Days">
+            </div>
+            <div class="input-group">
+                <label>HPL Balance (on D.O.R.)</label>
+                <input type="number" id="hplBalance" value="0" placeholder="Half Pay Leave Days">
             </div>
         </div>
     </div>
@@ -95,7 +103,7 @@
                 <h3>📊 Summary Statistics</h3>
                 <p id="resBasicPay"></p>
                 <p id="resService"></p>
-                <p id="resPeriods"></p>
+                <p id="resELHPL"></p>
             </div>
             <div>
                 <h3>📅 Retirement Info</h3>
@@ -109,6 +117,9 @@
 
         <h3>🔵 Part-B) Family Pension</h3>
         <div id="partB"></div>
+
+        <h3>🟠 Part-C) Leave Encashment</h3>
+        <div id="partC"></div>
     </div>
 </div>
 
@@ -128,17 +139,19 @@
     };
 
     function formatIndianCurrency(num, decimal = true) {
-        let x = Math.floor(num).toString();
+        let x = Math.floor(Math.abs(num)).toString();
         let lastThree = x.substring(x.length - 3);
         let otherNumbers = x.substring(0, x.length - 3);
         if (otherNumbers != '') lastThree = ',' + lastThree;
         let res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-        return "₹" + res + (decimal ? "." + (num.toFixed(2).split('.')[1]) : "");
+        let prefix = num < 0 ? "-" : "";
+        return prefix + "₹" + res + (decimal ? "." + (num.toFixed(2).split('.')[1]) : "");
     }
 
     function calculateDefaultDOR() {
-        const dob = new Date(document.getElementById('dob').value);
-        const doj = new Date(document.getElementById('doj').value);
+        const dobInput = document.getElementById('dob').value;
+        if (!dobInput) return;
+        const dob = new Date(dobInput);
         const retType = document.getElementById('retType').value;
         
         if (retType === "Superannuation") {
@@ -158,12 +171,16 @@
         const dob = new Date(document.getElementById('dob').value);
         const doj = new Date(document.getElementById('doj').value);
         const dor = new Date(document.getElementById('dor').value);
-        const da = parseFloat(document.getElementById('daPercent').value);
+        const daRate = parseFloat(document.getElementById('daPercent').value);
         const commP = parseFloat(document.getElementById('commPercent').value);
         const retType = document.getElementById('retType').value;
+        const elBal = parseInt(document.getElementById('elBalance').value) || 0;
+        const hplBal = parseInt(document.getElementById('hplBalance').value) || 0;
 
         if (basic <= 0) { alert("Please enter basic pay"); return; }
+        if (isNaN(dor.getTime())) { alert("Please set a valid Retirement Date"); return; }
 
+        // Qualifying Service
         const diffTime = Math.abs(dor - doj);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         const yrs = Math.floor(diffDays / 365.25);
@@ -174,7 +191,9 @@
         if (mos >= 9) periods += 3; else if (mos >= 3) periods += 1;
         periods = Math.min(66, periods);
 
-        const emoluments = basic * (1 + da / 100);
+        // Pension & Gratuity
+        const daAmt = basic * (daRate / 100);
+        const emoluments = basic + daAmt;
         const pensionBefore = basic / 2;
         const commAmt = (pensionBefore * commP) / 100;
         const residuary = pensionBefore - commAmt;
@@ -187,11 +206,25 @@
         const totalGrat = Math.min(2500000, (emoluments / 4) * periods);
         const withheld = document.getElementById('govtAcc').value === "Yes" ? Math.ceil(totalGrat * 0.1) : 0;
 
+        // --- Leave Encashment Logic ---
+        const elDays = Math.min(300, elBal);
+        const hplDaysAllowed = Math.min(hplBal, 300 - elDays);
+        
+        const elEncashAmt = ((basic + daAmt) / 30) * elDays;
+        
+        const hplSalary = basic / 2;
+        const hplDa = hplSalary * (daRate / 100);
+        const hplEncashAmt = ((hplSalary + hplDa) / 30) * hplDaysAllowed;
+        
+        const totalLeaveEncash = elEncashAmt + hplEncashAmt;
+
+        // --- Display Results ---
         document.getElementById('results').style.display = "block";
-        document.getElementById('resBasicPay').innerHTML = `**Basic Pay:** ${formatIndianCurrency(basic, false)}`;
-        document.getElementById('resService').innerHTML = `**Qualifying Service:** ${yrs} Years ${mos} Months ${days} Days`;
-        document.getElementById('resName').innerHTML = `**Retiree Name:** ${document.getElementById('name').value || 'N/A'}`;
-        document.getElementById('resAgeNext').innerHTML = `**Commutation Age Applied:** ${ageNext} Years`;
+        document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
+        document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
+        document.getElementById('resELHPL').innerHTML = `<b>EL Balance:</b> ${elBal} Days | <b>HPL Balance:</b> ${hplBal} Days`;
+        document.getElementById('resName').innerHTML = `<b>Retiree Name:</b> ${document.getElementById('name').value || 'N/A'}`;
+        document.getElementById('resAgeNext').innerHTML = `<b>Commutation Age Applied:</b> ${ageNext} Years`;
 
         document.getElementById('partA').innerHTML = `
             <div class="highlight-box">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
@@ -199,7 +232,7 @@
             <div class="highlight-box">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR</div>
             <div class="highlight-box">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
             <div class="highlight-box">5. Pension Gratuity Admissible: ${formatIndianCurrency(totalGrat)}</div>
-            <div class="highlight-box">6. Amount to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
+            <div class="highlight-box">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
             <div class="highlight-box payable-box">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheld)}</div>
         `;
 
@@ -207,6 +240,15 @@
             <div class="family-box">1. Enhanced Family Pension: ${formatIndianCurrency(pensionBefore)} + DR</div>
             <div class="family-box">2. Ordinary Family Pension: ${formatIndianCurrency(Math.max(9000, basic * 0.3))} + DR</div>
         `;
+
+        document.getElementById('partC').innerHTML = `
+            <div class="leave-box">1. Leave Encashment against EL (${elDays} days): ${formatIndianCurrency(elEncashAmt)}</div>
+            <div class="leave-box">2. Leave Encashment against HPL (${hplDaysAllowed} days): ${formatIndianCurrency(hplEncashAmt)}</div>
+            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(totalLeaveEncash)}</div>
+        `;
+
+        // Smooth scroll to results
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
 
     window.onload = calculateDefaultDOR;
