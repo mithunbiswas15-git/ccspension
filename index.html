@@ -31,7 +31,7 @@
 
 <div class="container">
     <div class="header-img">
-        <img src="https://i.ibb.co/G4HmMffX/pension-header-image-Copy.jpg" alt="Header Banner">
+        <img src="PASTE_YOUR_IMGBB_DIRECT_LINK_HERE" alt="Header Banner">
     </div>
     
     <h1>Pensionary Benefits & Leave Encashment</h1>
@@ -214,8 +214,13 @@
         const commAmt = (pensionBefore * commP) / 100;
         const residuary = pensionBefore - commAmt;
 
+        // --- Commutation Age Logic ---
         let ageNext = (dor.getFullYear() - dob.getFullYear()) + 1;
-        if (retType === "Superannuation" && ageNext < 61) ageNext = 61;
+        if (retType === "Superannuation" && ageNext < 61) {
+            ageNext = 61;
+        }
+        // In Voluntary, we use actual ageNext calculated above.
+
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
 
