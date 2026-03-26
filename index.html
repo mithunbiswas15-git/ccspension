@@ -46,11 +46,11 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>Date of Birth</label>
+                <label>Date of Birth (DD/MM/YYYY)</label>
                 <input type="date" id="dob" value="1965-10-03" min="1950-01-01" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
-                <label>Date of Retirement</label>
+                <label>Date of Retirement (DD/MM/YYYY)</label>
                 <input type="date" id="dor" min="1950-01-01">
             </div>
         </div>
@@ -80,16 +80,16 @@
 
         <div class="col">
             <div class="input-group">
-                <label>Date of Entry</label>
+                <label>Date of Entry (DD/MM/YYYY)</label>
                 <input type="date" id="doj" value="1995-01-01" min="1950-01-01" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
                 <label>EL Balance (on D.O.R.)</label>
-                <input type="number" id="elBalance" value="0" placeholder="Earned Leave Days">
+                <input type="number" id="elBalance" value="0">
             </div>
             <div class="input-group">
                 <label>HPL Balance (on D.O.R.)</label>
-                <input type="number" id="hplBalance" value="0" placeholder="Half Pay Leave Days">
+                <input type="number" id="hplBalance" value="0">
             </div>
         </div>
     </div>
@@ -174,24 +174,38 @@
         const daRate = parseFloat(document.getElementById('daPercent').value);
         const commP = parseFloat(document.getElementById('commPercent').value);
         const retType = document.getElementById('retType').value;
-        const elBal = parseInt(document.getElementById('elBalance').value) || 0;
-        const hplBal = parseInt(document.getElementById('hplBalance').value) || 0;
 
-        if (basic <= 0) { alert("Please enter basic pay"); return; }
-        if (isNaN(dor.getTime())) { alert("Please set a valid Retirement Date"); return; }
+        if (basic <= 0 || isNaN(dob.getTime()) || isNaN(doj.getTime()) || isNaN(dor.getTime())) { 
+            alert("Please ensure Basic Pay and all Dates are entered correctly."); 
+            return; 
+        }
 
-        // Qualifying Service
-        const diffTime = Math.abs(dor - doj);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        const yrs = Math.floor(diffDays / 365.25);
-        const mos = Math.floor((diffDays % 365.25) / 30.44);
-        const days = Math.floor((diffDays % 365.25) % 30.44);
+        // --- INCLUSIVE SERVICE CALCULATION ---
+        let start = new Date(doj);
+        let end = new Date(dor);
+        // Add 1 day to the end to include both dates
+        let inclusiveEnd = new Date(end);
+        inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
+
+        let yrs = inclusiveEnd.getFullYear() - start.getFullYear();
+        let mos = inclusiveEnd.getMonth() - start.getMonth();
+        let days = inclusiveEnd.getDate() - start.getDate();
+
+        if (days < 0) {
+            mos--;
+            let prevMonth = new Date(inclusiveEnd.getFullYear(), inclusiveEnd.getMonth(), 0);
+            days += prevMonth.getDate();
+        }
+        if (mos < 0) {
+            yrs--;
+            mos += 12;
+        }
 
         let periods = yrs * 2;
         if (mos >= 9) periods += 3; else if (mos >= 3) periods += 1;
         periods = Math.min(66, periods);
 
-        // Pension & Gratuity
+        // --- PENSION & GRATUITY ---
         const daAmt = basic * (daRate / 100);
         const emoluments = basic + daAmt;
         const pensionBefore = basic / 2;
@@ -206,21 +220,18 @@
         const totalGrat = Math.min(2500000, (emoluments / 4) * periods);
         const withheld = document.getElementById('govtAcc').value === "Yes" ? Math.ceil(totalGrat * 0.1) : 0;
 
-        // --- Leave Encashment Logic ---
+        // --- LEAVE ENCASHMENT ---
+        const elBal = parseInt(document.getElementById('elBalance').value) || 0;
+        const hplBal = parseInt(document.getElementById('hplBalance').value) || 0;
         const elDays = Math.min(300, elBal);
         const hplDaysAllowed = Math.min(hplBal, 300 - elDays);
-        
         const elEncashAmt = ((basic + daAmt) / 30) * elDays;
-        
-        const hplSalary = basic / 2;
-        const hplDa = hplSalary * (daRate / 100);
-        const hplEncashAmt = ((hplSalary + hplDa) / 30) * hplDaysAllowed;
-        
-        const totalLeaveEncash = elEncashAmt + hplEncashAmt;
+        const hplEncashAmt = (((basic / 2) + (basic / 2 * daRate / 100)) / 30) * hplDaysAllowed;
 
-        // --- Display Results ---
+        // --- DISPLAY RESULTS ---
         document.getElementById('results').style.display = "block";
         document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
+        // Displaying Service without commas
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
         document.getElementById('resELHPL').innerHTML = `<b>EL Balance:</b> ${elBal} Days | <b>HPL Balance:</b> ${hplBal} Days`;
         document.getElementById('resName').innerHTML = `<b>Retiree Name:</b> ${document.getElementById('name').value || 'N/A'}`;
@@ -244,10 +255,9 @@
         document.getElementById('partC').innerHTML = `
             <div class="leave-box">1. Leave Encashment against EL (${elDays} days): ${formatIndianCurrency(elEncashAmt)}</div>
             <div class="leave-box">2. Leave Encashment against HPL (${hplDaysAllowed} days): ${formatIndianCurrency(hplEncashAmt)}</div>
-            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(totalLeaveEncash)}</div>
+            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(elEncashAmt + hplEncashAmt)}</div>
         `;
 
-        // Smooth scroll to results
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
 
