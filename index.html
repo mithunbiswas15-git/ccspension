@@ -136,7 +136,7 @@
 <script>
     const commutationTable = {
         20: 9.188, 21: 9.187, 22: 9.186, 23: 9.185, 24: 9.184, 25: 9.183, 26: 9.182, 27: 9.180, 28: 9.178, 29: 9.176,
-        30: 9.173, 31: 9.169, 32: 9.164, 33: 9.159, 34: 9.152, 35: 9.145, 36: 9.136, 37: 9.126, 38: 9.116, 39: 9.103,
+        30: 9.173, 31: 9.169, 32: 9.164, 33: 9.159, 34: 9.152, 35: 9.145, 36: 9.145, 37: 9.126, 38: 9.116, 39: 9.103,
         40: 9.090, 41: 9.075, 42: 9.059, 43: 9.040, 44: 9.019, 45: 8.996, 46: 8.971, 47: 8.943, 48: 8.913, 49: 8.881,
         50: 8.846, 51: 8.808, 52: 8.768, 53: 8.724, 54: 8.678, 55: 8.627, 56: 8.572, 57: 8.512, 58: 8.446, 59: 8.371,
         60: 8.287, 61: 8.194, 62: 8.093, 63: 7.982, 64: 7.862, 65: 7.731, 66: 7.591, 67: 7.431, 68: 7.262, 69: 7.083,
@@ -215,21 +215,14 @@
         const commAmt = (pensionBefore * commP) / 100;
         const residuary = pensionBefore - commAmt;
 
-        // --- CORRECTED COMMUTATION AGE LOGIC ---
-        // 1. Calculate exact age on Date of Retirement
+        // Commutation Age Logic
         let ageOnRetirement = dor.getFullYear() - dob.getFullYear();
         let m = dor.getMonth() - dob.getMonth();
         if (m < 0 || (m === 0 && dor.getDate() < dob.getDate())) {
             ageOnRetirement--;
         }
-
-        // 2. Commutation factor is based on "Age on Next Birthday"
         let ageNext = ageOnRetirement + 1;
-        
-        // 3. Apply Superannuation minimum rule (61)
-        if (retType === "Superannuation" && ageNext < 61) {
-            ageNext = 61;
-        }
+        if (retType === "Superannuation" && ageNext < 61) ageNext = 61;
 
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
@@ -254,7 +247,7 @@
         document.getElementById('partA').innerHTML = `
             <div class="highlight-box">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
             <div class="highlight-box">2. Commuted Pension: ${formatIndianCurrency(commAmt)}</div>
-            <div class="highlight-box">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR</div>
+            <div class="highlight-box">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR (Within bracket it is mentioned that the DR means full DR applied on the basic pension)</div>
             <div class="highlight-box">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
             <div class="highlight-box">5. Pension Gratuity Admissible: ${formatIndianCurrency(totalGrat)}</div>
             <div class="highlight-box">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
