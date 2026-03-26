@@ -186,7 +186,7 @@
             return; 
         }
 
-        // Inclusive Service Calculation
+        // Qualifying Service (Inclusive)
         let start = new Date(doj);
         let inclusiveEnd = new Date(dor);
         inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
@@ -215,10 +215,18 @@
         const commAmt = (pensionBefore * commP) / 100;
         const residuary = pensionBefore - commAmt;
 
-        // --- Commutation Age Logic ---
-        let ageNext = (dor.getFullYear() - dob.getFullYear()) + 1;
+        // --- CORRECTED COMMUTATION AGE LOGIC ---
+        // 1. Calculate exact age on Date of Retirement
+        let ageOnRetirement = dor.getFullYear() - dob.getFullYear();
+        let m = dor.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && dor.getDate() < dob.getDate())) {
+            ageOnRetirement--;
+        }
+
+        // 2. Commutation factor is based on "Age on Next Birthday"
+        let ageNext = ageOnRetirement + 1;
         
-        // Only Superannuation has the "Minimum 61" rule
+        // 3. Apply Superannuation minimum rule (61)
         if (retType === "Superannuation" && ageNext < 61) {
             ageNext = 61;
         }
