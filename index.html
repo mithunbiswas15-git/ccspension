@@ -13,16 +13,49 @@
         .input-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: #ff4b4b; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #e63939; }
+        
+        /* Buttons Styling */
+        .btn-main { width: 100%; padding: 15px; background-color: #ff4b4b; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        .btn-main:hover { background-color: #e63939; }
+        
+        .button-row { display: flex; gap: 15px; margin-top: 20px; }
+        .btn-blue { 
+            flex: 1;
+            background-color: #0056b3; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            padding: 12px; 
+            font-size: 1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .btn-blue:hover { background-color: #004494; }
+
         .divider { height: 2px; background: #eee; margin: 30px 0; }
         .highlight-box { padding: 15px; border-radius: 8px; border-left: 5px solid #2e7d32; background-color: #e8f5e9; margin-bottom: 10px; font-weight: bold; }
         .family-box { padding: 15px; border-radius: 8px; border-left: 5px solid #1565c0; background-color: #e3f2fd; margin-bottom: 10px; font-weight: bold; }
         .leave-box { padding: 15px; border-radius: 8px; border-left: 5px solid #ed6c02; background-color: #fff3e0; margin-bottom: 10px; font-weight: bold; }
         .payable-box { background-color: #c8e6c9 !important; border-left-color: #1b5e20 !important; }
+        
         .footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #f0f2f6; color: #555; text-align: center; padding: 10px; font-size: 14px; border-top: 1px solid #ddd; z-index: 1000; }
         .results-section { display: none; margin-top: 20px; }
         h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+
+        /* Print Specific Styles */
+        @media print {
+            body { background-color: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            .grid, .btn-main, .button-row, .input-group, .footer, .divider, label, input, select { display: none !important; }
+            .results-section { display: block !important; margin-top: 0; }
+            .header-img { margin-bottom: 30px; }
+            .highlight-box, .family-box, .leave-box { border: 1px solid #ccc; background-color: #fafafa !important; }
+        }
     </style>
 </head>
 <body>
@@ -47,11 +80,11 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>Date of Birth</label>
+                <label>Date of Birth (DD/MM/YYYY)</label>
                 <input type="date" id="dob" value="1965-10-03" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
-                <label>Date of Retirement</label>
+                <label>Date of Retirement (DD/MM/YYYY)</label>
                 <input type="date" id="dor">
             </div>
         </div>
@@ -81,7 +114,7 @@
 
         <div class="col">
             <div class="input-group">
-                <label>Date of Entry</label>
+                <label>Date of Entry (DD/MM/YYYY)</label>
                 <input type="date" id="doj" value="1995-01-01" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
@@ -95,14 +128,25 @@
         </div>
     </div>
 
-    <button onclick="generateReport()">Generate Calculation Report</button>
+    <button class="btn-main" onclick="generateReport()">Generate Calculation Report</button>
 
     <div id="results" class="results-section">
         <div class="divider"></div>
-        <div class="grid">
+        
+        <div class="button-row">
+            <button class="btn-blue" onclick="window.print()">
+                <span>📄</span> Download PDF
+            </button>
+            <button class="btn-blue" onclick="window.print()">
+                <span>🖨️</span> Print Report
+            </button>
+        </div>
+
+        <div class="grid" style="display: grid; margin-top: 30px;">
             <div>
                 <h3>📊 Summary Statistics</h3>
                 <p id="resBasicPay"></p>
+                <p id="resDates"></p>
                 <p id="resService"></p>
                 <p id="resELHPL"></p>
             </div>
@@ -138,6 +182,14 @@
         70: 6.897, 71: 6.701, 72: 6.499, 73: 6.289, 74: 6.075, 75: 5.857, 76: 5.638, 77: 5.421, 78: 5.205, 79: 4.993,
         80: 4.784, 81: 4.581
     };
+
+    function formatDate(dateObj) {
+        if (!dateObj || isNaN(dateObj.getTime())) return "N/A";
+        let d = dateObj.getDate();
+        let m = dateObj.getMonth() + 1;
+        let y = dateObj.getFullYear();
+        return (d < 10 ? '0' + d : d) + '/' + (m < 10 ? '0' + m : m) + '/' + y;
+    }
 
     function formatIndianCurrency(num, decimal = true) {
         let x = Math.floor(Math.abs(num)).toString();
@@ -180,6 +232,7 @@
             return; 
         }
 
+        // Qualifying Service (Inclusive)
         let start = new Date(doj);
         let inclusiveEnd = new Date(dor);
         inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
@@ -217,10 +270,11 @@
         const hplDaysToEncash = Math.min(hplInput, gap);
         const elEncashAmt = ((basic + daAmt) / 30) * elDays;
         const hplEncashAmt = (((basic / 2) + ((basic / 2) * (daRate / 100))) / 30) * hplDaysToEncash;
-        const totalLeaveEncash = elEncashAmt + hplEncashAmt;
 
+        // RESULTS DISPLAY
         document.getElementById('results').style.display = "block";
         document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
+        document.getElementById('resDates').innerHTML = `<b>DOB:</b> ${formatDate(dob)} | <b>DOR:</b> ${formatDate(dor)}`;
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
         document.getElementById('resELHPL').innerHTML = `<b>EL used:</b> ${elDays} Days | <b>HPL used:</b> ${hplDaysToEncash} Days`;
         document.getElementById('resName').innerHTML = `<b>Retiree Name:</b> ${document.getElementById('name').value || 'N/A'}`;
