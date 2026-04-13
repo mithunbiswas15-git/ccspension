@@ -38,12 +38,33 @@
         .results-section { display: none; margin-top: 20px; }
         h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0; }
 
+        /* Updated Print Specific Styles */
         @media print {
-            .grid, .btn-main, .print-btn-container, .input-group, .footer, label, input, select { display: none !important; }
-            .results-section { display: block !important; }
-            .benefit-card { box-shadow: none; border: 1px solid #000; }
-            .card-header { color: black !important; border-bottom: 1px solid #000; background: #f0f0f0 !important; }
-            .payable-highlight { background-color: #eee !important; border: 1px solid #000; }
+            body { background-color: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            
+            /* Hide UI Elements only */
+            .btn-main, .print-btn-container, .footer, .divider, input[type="range"], output { display: none !important; }
+            
+            /* Show everything else */
+            .grid { display: grid !important; }
+            .results-section { display: block !important; margin-top: 20px; }
+            
+            /* Make inputs look like standard text */
+            input, select { 
+                border: none !important; 
+                padding: 0 !important; 
+                background: transparent !important; 
+                font-size: 1rem !important;
+                appearance: none;
+                -webkit-appearance: none;
+                color: black !important;
+            }
+            
+            .benefit-card { box-shadow: none; border: 1px solid #000; page-break-inside: avoid; }
+            .card-header { color: black !important; border-bottom: 1px solid #000; background: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
+            .payable-highlight { background-color: #eee !important; border: 1px solid #000; -webkit-print-color-adjust: exact; }
+            .grid[style*="background: #fafafa"] { background: #fff !important; border: 1px solid #ccc !important; }
         }
     </style>
 </head>
@@ -75,11 +96,11 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>Date of Birth (DD/MM/YYYY)</label>
+                <label>Date of Birth</label>
                 <input type="date" id="dob" value="1965-10-03" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
-                <label>Date of Retirement (DD/MM/YYYY)</label>
+                <label>Date of Retirement</label>
                 <input type="date" id="dor">
             </div>
         </div>
@@ -109,7 +130,7 @@
 
         <div class="col">
             <div class="input-group">
-                <label>Date of Entry (DD/MM/YYYY)</label>
+                <label>Date of Entry</label>
                 <input type="date" id="doj" value="1995-01-01" onchange="calculateDefaultDOR()">
             </div>
             <div class="input-group">
