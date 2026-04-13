@@ -6,7 +6,7 @@
     <title>Pensionary Benefits & Leave Encashment Calculator</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7f9; color: #333; margin: 0; padding: 20px; padding-bottom: 80px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         .header-img { text-align: center; margin-bottom: 20px; }
         .header-img img { max-width: 100%; height: auto; border-radius: 8px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
@@ -14,28 +14,25 @@
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         
-        /* Buttons Styling */
         .btn-main { width: 100%; padding: 15px; background-color: #ff4b4b; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         .btn-main:hover { background-color: #e63939; }
         
-        .button-row { display: flex; gap: 15px; margin-top: 20px; }
-        .btn-blue { 
-            flex: 1;
-            background-color: #0056b3; 
-            color: white; 
+        /* New Minimalist Print Button at Top Right */
+        .print-btn-container { position: absolute; top: 20px; right: 20px; display: none; }
+        .btn-print-minimal { 
+            background: none; 
             border: none; 
-            border-radius: 8px; 
-            padding: 12px; 
-            font-size: 1rem; 
-            font-weight: bold; 
+            color: #0056b3; 
             cursor: pointer; 
+            font-size: 0.9rem; 
+            font-weight: bold; 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
-            gap: 10px;
-            transition: 0.3s;
+            gap: 5px; 
+            padding: 5px;
+            transition: opacity 0.2s;
         }
-        .btn-blue:hover { background-color: #004494; }
+        .btn-print-minimal:hover { opacity: 0.7; }
 
         .divider { height: 2px; background: #eee; margin: 30px 0; }
         .highlight-box { padding: 15px; border-radius: 8px; border-left: 5px solid #2e7d32; background-color: #e8f5e9; margin-bottom: 10px; font-weight: bold; }
@@ -47,11 +44,10 @@
         .results-section { display: none; margin-top: 20px; }
         h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
 
-        /* Print Specific Styles */
         @media print {
             body { background-color: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .grid, .btn-main, .button-row, .input-group, .footer, .divider, label, input, select { display: none !important; }
+            .grid, .btn-main, .print-btn-container, .input-group, .footer, .divider, label, input, select { display: none !important; }
             .results-section { display: block !important; margin-top: 0; }
             .header-img { margin-bottom: 30px; }
             .highlight-box, .family-box, .leave-box { border: 1px solid #ccc; background-color: #fafafa !important; }
@@ -61,6 +57,12 @@
 <body>
 
 <div class="container">
+    <div id="printContainer" class="print-btn-container">
+        <button class="btn-print-minimal" onclick="window.print()">
+            <span>🖨️</span> Print Report
+        </button>
+    </div>
+
     <div class="header-img">
         <img src="https://i.ibb.co/C3KcMTy2/ccspension-background-2.jpg" alt="Header Banner">
     </div>
@@ -133,16 +135,7 @@
     <div id="results" class="results-section">
         <div class="divider"></div>
         
-        <div class="button-row">
-            <button class="btn-blue" onclick="window.print()">
-                <span>📄</span> Download PDF
-            </button>
-            <button class="btn-blue" onclick="window.print()">
-                <span>🖨️</span> Print Report
-            </button>
-        </div>
-
-        <div class="grid" style="display: grid; margin-top: 30px;">
+        <div class="grid" style="display: grid; margin-top: 10px;">
             <div>
                 <h3>📊 Summary Statistics</h3>
                 <p id="resBasicPay"></p>
@@ -232,7 +225,6 @@
             return; 
         }
 
-        // Qualifying Service (Inclusive)
         let start = new Date(doj);
         let inclusiveEnd = new Date(dor);
         inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
@@ -271,8 +263,8 @@
         const elEncashAmt = ((basic + daAmt) / 30) * elDays;
         const hplEncashAmt = (((basic / 2) + ((basic / 2) * (daRate / 100))) / 30) * hplDaysToEncash;
 
-        // RESULTS DISPLAY
         document.getElementById('results').style.display = "block";
+        document.getElementById('printContainer').style.display = "block";
         document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
         document.getElementById('resDates').innerHTML = `<b>DOB:</b> ${formatDate(dob)} | <b>DOR:</b> ${formatDate(dor)}`;
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
