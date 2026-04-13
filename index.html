@@ -203,7 +203,9 @@
         const daAmt = basic * (daRate / 100);
         const emoluments = basic + daAmt;
         const pensionBefore = basic / 2;
-        const commAmt = (pensionBefore * commP) / 100;
+        
+        // --- UPDATED ROUNDING: Commuted Pension rounded UP ---
+        const commAmt = Math.ceil((pensionBefore * commP) / 100);
         const residuary = pensionBefore - commAmt;
 
         let ageOnRetirement = dor.getFullYear() - dob.getFullYear();
@@ -214,25 +216,18 @@
 
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
-        const totalGrat = Math.min(2500000, (emoluments / 4) * periods);
+        
+        // --- UPDATED ROUNDING: Gratuity rounded to NEAREST ---
+        const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
         const withheld = document.getElementById('govtAcc').value === "Yes" ? Math.ceil(totalGrat * 0.1) : 0;
 
-        // --- FIXED LEAVE ENCASHMENT LOGIC ---
         const elInput = parseInt(document.getElementById('elBalance').value) || 0;
         const hplInput = parseInt(document.getElementById('hplBalance').value) || 0;
-        
-        // EL Capped at 300
         const elDays = Math.min(300, elInput);
-        
-        // HPL allowed only to bridge the gap between EL and 300
         const gap = 300 - elDays;
         const hplDaysToEncash = Math.min(hplInput, gap);
-        
         const elEncashAmt = ((basic + daAmt) / 30) * elDays;
-        
-        // HPL Encashment formula uses Half Pay and Half DA
         const hplEncashAmt = (((basic / 2) + ((basic / 2) * (daRate / 100))) / 30) * hplDaysToEncash;
-        
         const totalLeaveEncash = elEncashAmt + hplEncashAmt;
 
         // --- RESULTS ---
@@ -245,10 +240,10 @@
 
         document.getElementById('partA').innerHTML = `
             <div class="highlight-box">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
-            <div class="highlight-box">2. Commuted Pension: ${formatIndianCurrency(commAmt)}</div>
+            <div class="highlight-box">2. Commuted Pension (Rounded Up): ${formatIndianCurrency(commAmt)}</div>
             <div class="highlight-box">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR (DR applied on basic pension before commutation)</div>
             <div class="highlight-box">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
-            <div class="highlight-box">5. Pension Gratuity Admissible: ${formatIndianCurrency(totalGrat)}</div>
+            <div class="highlight-box">5. Pension Gratuity Admissible (Rounded): ${formatIndianCurrency(totalGrat)}</div>
             <div class="highlight-box">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
             <div class="highlight-box payable-box">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheld)}</div>
         `;
