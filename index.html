@@ -9,8 +9,6 @@
         .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .header-img { text-align: center; margin-bottom: 20px; }
         .header-img img { max-width: 100%; height: auto; border-radius: 8px; }
-        h1 { color: #1a3a5a; margin-bottom: 5px; text-align: center; }
-        .subtext { font-style: italic; color: #666; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 15px; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .input-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
@@ -31,11 +29,8 @@
 
 <div class="container">
     <div class="header-img">
-        <img src="https://i.ibb.co/67CBgnPr/ccspension-background-2.jpg" alt="Header Banner">
+        <img src="PASTE_YOUR_IMGBB_DIRECT_LINK_HERE" alt="Header Banner">
     </div>
-    
-    <h1>Pensionary Benefits & Leave Encashment</h1>
-    <p class="subtext">Created by: Mithun Biswas, Executive Assistant, Pension Cell, CGST & C.Ex. Mumbai Central</p>
 
     <div class="grid">
         <div class="col">
@@ -185,7 +180,6 @@
             return; 
         }
 
-        // Qualifying Service (Inclusive)
         let start = new Date(doj);
         let inclusiveEnd = new Date(dor);
         inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
@@ -199,12 +193,9 @@
         if (mos >= 9) periods += 3; else if (mos >= 3) periods += 1;
         periods = Math.min(66, periods);
 
-        // Pension & Gratuity
         const daAmt = basic * (daRate / 100);
         const emoluments = basic + daAmt;
         const pensionBefore = basic / 2;
-        
-        // --- UPDATED ROUNDING: Commuted Pension rounded UP ---
         const commAmt = Math.ceil((pensionBefore * commP) / 100);
         const residuary = pensionBefore - commAmt;
 
@@ -216,8 +207,6 @@
 
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
-        
-        // --- UPDATED ROUNDING: Gratuity rounded to NEAREST ---
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
         const withheld = document.getElementById('govtAcc').value === "Yes" ? Math.ceil(totalGrat * 0.1) : 0;
 
@@ -230,11 +219,10 @@
         const hplEncashAmt = (((basic / 2) + ((basic / 2) * (daRate / 100))) / 30) * hplDaysToEncash;
         const totalLeaveEncash = elEncashAmt + hplEncashAmt;
 
-        // --- RESULTS ---
         document.getElementById('results').style.display = "block";
         document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
-        document.getElementById('resELHPL').innerHTML = `<b>EL used:</b> ${elDays} Days | <b>HPL used:</b> ${hplDaysToEncash} Days (Total: ${elDays + hplDaysToEncash})`;
+        document.getElementById('resELHPL').innerHTML = `<b>EL used:</b> ${elDays} Days | <b>HPL used:</b> ${hplDaysToEncash} Days`;
         document.getElementById('resName').innerHTML = `<b>Retiree Name:</b> ${document.getElementById('name').value || 'N/A'}`;
         document.getElementById('resAgeNext').innerHTML = `<b>Commutation Age Applied:</b> ${ageNext} Years`;
 
@@ -256,7 +244,7 @@
         document.getElementById('partC').innerHTML = `
             <div class="leave-box">1. Leave Encashment against EL (${elDays} days): ${formatIndianCurrency(elEncashAmt)}</div>
             <div class="leave-box">2. Leave Encashment against HPL (${hplDaysToEncash} days): ${formatIndianCurrency(hplEncashAmt)}</div>
-            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(totalLeaveEncash)}</div>
+            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(elEncashAmt + hplEncashAmt)}</div>
         `;
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
