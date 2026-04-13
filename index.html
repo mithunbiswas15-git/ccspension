@@ -17,40 +17,33 @@
         .btn-main { width: 100%; padding: 15px; background-color: #ff4b4b; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         .btn-main:hover { background-color: #e63939; }
         
-        /* New Minimalist Print Button at Top Right */
+        /* Minimalist Print Button at Top Right */
         .print-btn-container { position: absolute; top: 20px; right: 20px; display: none; }
-        .btn-print-minimal { 
-            background: none; 
-            border: none; 
-            color: #0056b3; 
-            cursor: pointer; 
-            font-size: 0.9rem; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            gap: 5px; 
-            padding: 5px;
-            transition: opacity 0.2s;
-        }
-        .btn-print-minimal:hover { opacity: 0.7; }
+        .btn-print-minimal { background: none; border: none; color: #0056b3; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 5px; padding: 5px; }
 
-        .divider { height: 2px; background: #eee; margin: 30px 0; }
-        .highlight-box { padding: 15px; border-radius: 8px; border-left: 5px solid #2e7d32; background-color: #e8f5e9; margin-bottom: 10px; font-weight: bold; }
-        .family-box { padding: 15px; border-radius: 8px; border-left: 5px solid #1565c0; background-color: #e3f2fd; margin-bottom: 10px; font-weight: bold; }
-        .leave-box { padding: 15px; border-radius: 8px; border-left: 5px solid #ed6c02; background-color: #fff3e0; margin-bottom: 10px; font-weight: bold; }
-        .payable-box { background-color: #c8e6c9 !important; border-left-color: #1b5e20 !important; }
+        /* Card Styling */
+        .benefit-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; margin-bottom: 25px; }
+        .card-header { padding: 12px 20px; color: white; font-weight: bold; font-size: 1.1rem; }
+        .card-body { padding: 20px; }
         
+        .header-pension { background-color: #2e7d32; }
+        .header-family { background-color: #1565c0; }
+        .header-leave { background-color: #ed6c02; }
+
+        .line-item { padding: 10px; border-bottom: 1px solid #f0f0f0; font-weight: 500; }
+        .line-item:last-child { border-bottom: none; }
+        .payable-highlight { background-color: #e8f5e9; font-weight: bold; border-left: 4px solid #2e7d32; margin-top: 10px; }
+
         .footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #f0f2f6; color: #555; text-align: center; padding: 10px; font-size: 14px; border-top: 1px solid #ddd; z-index: 1000; }
         .results-section { display: none; margin-top: 20px; }
-        h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        h3 { color: #1a3a5a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0; }
 
         @media print {
-            body { background-color: white; padding: 0; }
-            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .grid, .btn-main, .print-btn-container, .input-group, .footer, .divider, label, input, select { display: none !important; }
-            .results-section { display: block !important; margin-top: 0; }
-            .header-img { margin-bottom: 30px; }
-            .highlight-box, .family-box, .leave-box { border: 1px solid #ccc; background-color: #fafafa !important; }
+            .grid, .btn-main, .print-btn-container, .input-group, .footer, label, input, select { display: none !important; }
+            .results-section { display: block !important; }
+            .benefit-card { box-shadow: none; border: 1px solid #000; }
+            .card-header { color: black !important; border-bottom: 1px solid #000; background: #f0f0f0 !important; }
+            .payable-highlight { background-color: #eee !important; border: 1px solid #000; }
         }
     </style>
 </head>
@@ -133,9 +126,7 @@
     <button class="btn-main" onclick="generateReport()">Generate Calculation Report</button>
 
     <div id="results" class="results-section">
-        <div class="divider"></div>
-        
-        <div class="grid" style="display: grid; margin-top: 10px;">
+        <div class="grid" style="margin-top: 10px; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
             <div>
                 <h3>📊 Summary Statistics</h3>
                 <p id="resBasicPay"></p>
@@ -149,15 +140,22 @@
                 <p id="resAgeNext"></p>
             </div>
         </div>
+        <br>
 
-        <h3>🟢 Part-A) Pensionary Benefits</h3>
-        <div id="partA"></div>
+        <div class="benefit-card">
+            <div class="card-header header-pension">🟢 Part-A) Pensionary Benefits</div>
+            <div class="card-body" id="partA"></div>
+        </div>
 
-        <h3>🔵 Part-B) Family Pension</h3>
-        <div id="partB"></div>
+        <div class="benefit-card">
+            <div class="card-header header-family">🔵 Part-B) Family Pension</div>
+            <div class="card-body" id="partB"></div>
+        </div>
 
-        <h3>🟠 Part-C) Leave Encashment</h3>
-        <div id="partC"></div>
+        <div class="benefit-card">
+            <div class="card-header header-leave">🟠 Part-C) Leave Encashment</div>
+            <div class="card-body" id="partC"></div>
+        </div>
     </div>
 </div>
 
@@ -265,6 +263,7 @@
 
         document.getElementById('results').style.display = "block";
         document.getElementById('printContainer').style.display = "block";
+        
         document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
         document.getElementById('resDates').innerHTML = `<b>DOB:</b> ${formatDate(dob)} | <b>DOR:</b> ${formatDate(dor)}`;
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
@@ -273,24 +272,24 @@
         document.getElementById('resAgeNext').innerHTML = `<b>Commutation Age Applied:</b> ${ageNext} Years`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="highlight-box">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
-            <div class="highlight-box">2. Commuted Pension (Rounded Up): ${formatIndianCurrency(commAmt)}</div>
-            <div class="highlight-box">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR (DR applied on basic pension before commutation)</div>
-            <div class="highlight-box">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
-            <div class="highlight-box">5. Pension Gratuity Admissible (Rounded): ${formatIndianCurrency(totalGrat)}</div>
-            <div class="highlight-box">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
-            <div class="highlight-box payable-box">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheld)}</div>
+            <div class="line-item">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
+            <div class="line-item">2. Commuted Pension (Rounded Up): ${formatIndianCurrency(commAmt)}</div>
+            <div class="line-item">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR <br><small style="color:#666;">(Note: DR is applied on basic pension before commutation)</small></div>
+            <div class="line-item">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
+            <div class="line-item">5. Pension Gratuity Admissible (Rounded): ${formatIndianCurrency(totalGrat)}</div>
+            <div class="line-item">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
+            <div class="line-item payable-highlight">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheld)}</div>
         `;
 
         document.getElementById('partB').innerHTML = `
-            <div class="family-box">1. Enhanced Family Pension: ${formatIndianCurrency(pensionBefore)} + DR</div>
-            <div class="family-box">2. Ordinary Family Pension: ${formatIndianCurrency(Math.max(9000, basic * 0.3))} + DR</div>
+            <div class="line-item">1. Enhanced Family Pension: ${formatIndianCurrency(pensionBefore)} + DR</div>
+            <div class="line-item">2. Ordinary Family Pension: ${formatIndianCurrency(Math.max(9000, basic * 0.3))} + DR</div>
         `;
 
         document.getElementById('partC').innerHTML = `
-            <div class="leave-box">1. Leave Encashment against EL (${elDays} days): ${formatIndianCurrency(elEncashAmt)}</div>
-            <div class="leave-box">2. Leave Encashment against HPL (${hplDaysToEncash} days): ${formatIndianCurrency(hplEncashAmt)}</div>
-            <div class="leave-box payable-box">3. Total Leave Encashment Payable: ${formatIndianCurrency(elEncashAmt + hplEncashAmt)}</div>
+            <div class="line-item">1. Leave Encashment against EL (${elDays} days): ${formatIndianCurrency(elEncashAmt)}</div>
+            <div class="line-item">2. Leave Encashment against HPL (${hplDaysToEncash} days): ${formatIndianCurrency(hplEncashAmt)}</div>
+            <div class="line-item payable-highlight">3. Total Leave Encashment Payable: ${formatIndianCurrency(elEncashAmt + hplEncashAmt)}</div>
         `;
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
