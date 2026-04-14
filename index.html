@@ -185,14 +185,14 @@
         return (d < 10 ? '0' + d : d) + '/' + (m < 10 ? '0' + m : m) + '/' + y;
     }
 
-    function formatIndianCurrency(num, decimal = true) {
-        let x = Math.floor(Math.abs(num)).toString();
+    function formatIndianCurrency(num) {
+        let x = Math.round(Math.abs(num)).toString();
         let lastThree = x.substring(x.length - 3);
         let otherNumbers = x.substring(0, x.length - 3);
         if (otherNumbers != '') lastThree = ',' + lastThree;
         let res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
         let prefix = num < 0 ? "-" : "";
-        return prefix + "₹" + res + (decimal ? "." + (num.toFixed(2).split('.')[1]) : "");
+        return prefix + "₹" + res;
     }
 
     function calculateDefaultDOR() {
@@ -257,7 +257,7 @@
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
-        const withheld = Math.ceil(totalGrat * 0.1);
+        const withheld = Math.round(totalGrat * 0.1);
         const withheldDisplay = document.getElementById('govtAcc').value === "Yes" ? withheld : 0;
 
         const elDays = Math.min(300, elInput);
@@ -269,7 +269,7 @@
         document.getElementById('results').style.display = "block";
         document.getElementById('printContainer').style.display = "block";
         
-        document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic, false)}`;
+        document.getElementById('resBasicPay').innerHTML = `<b>Basic Pay:</b> ${formatIndianCurrency(basic)}`;
         document.getElementById('resDates').innerHTML = `<b>DOB:</b> ${formatDate(dob)} | <b>DOR:</b> ${formatDate(dor)}`;
         document.getElementById('resService').innerHTML = `<b>Qualifying Service:</b> ${yrs} Years ${mos} Months ${days} Days`;
         document.getElementById('resELHPL').innerHTML = `<b>EL used:</b> ${elDays} Days | <b>HPL used:</b> ${hplDaysToEncash} Days`;
@@ -280,9 +280,9 @@
             <div class="line-item">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
             <div class="line-item">2. Commuted Pension: ${formatIndianCurrency(commAmt)}</div>
             <div class="line-item">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR <br><small style="color:#666;">(Note: DR is applied on basic pension before commutation)</small></div>
-            <div class="line-item">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
+            <div class="line-item">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum)}</div>
             <div class="line-item">5. Pension Gratuity Admissible: ${formatIndianCurrency(totalGrat)}</div>
-            <div class="line-item">6. Amount of Gratuity to be Withheld: ${formatIndianCurrency(withheldDisplay, false)}</div>
+            <div class="line-item">6. Amount of Gratuity to be Withheld: ${formatIndianCurrency(withheldDisplay)}</div>
             <div class="line-item payable-highlight">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheldDisplay)}</div>
         `;
 
