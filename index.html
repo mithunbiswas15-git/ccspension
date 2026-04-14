@@ -281,11 +281,11 @@
 
         document.getElementById('partA').innerHTML = `
             <div class="line-item">1. Monthly Pension before Commutation: ${formatIndianCurrency(pensionBefore)} + DR</div>
-            <div class="line-item">2. Commuted Pension (Rounded Up): ${formatIndianCurrency(commAmt)}</div>
+            <div class="line-item">2. Commuted Pension: ${formatIndianCurrency(commAmt)}</div>
             <div class="line-item">3. Residuary Pension after Commutation: ${formatIndianCurrency(residuary)} + DR <br><small style="color:#666;">(Note: DR is applied on basic pension before commutation)</small></div>
             <div class="line-item">4. Commuted Value [Lump sum]: ${formatIndianCurrency(lumpSum, false)}</div>
-            <div class="line-item">5. Pension Gratuity Admissible (Rounded): ${formatIndianCurrency(totalGrat)}</div>
-            <div class="line-item">6. Amount of Gratuity to be Withheld (Rounded Up): ${formatIndianCurrency(withheld, false)}</div>
+            <div class="line-item">5. Pension Gratuity Admissible: ${formatIndianCurrency(totalGrat)}</div>
+            <div class="line-item">6. Amount of Gratuity to be Withheld: ${formatIndianCurrency(withheld, false)}</div>
             <div class="line-item payable-highlight">7. Net Payable Gratuity: ${formatIndianCurrency(totalGrat - withheld)}</div>
         `;
 
