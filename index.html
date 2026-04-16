@@ -32,7 +32,7 @@
             position: relative; 
         }
 
-        /* Header & Navigation */
+        /* Centered Badge Layout */
         .top-nav { 
             display: flex; 
             flex-direction: column;
@@ -97,8 +97,16 @@
         
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
+        
+        /* Unified White Background for all inputs */
         input, select { 
-            width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 0.9rem;
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 0.9rem;
+            background-color: #ffffff !important; /* Forces white background */
         }
 
         .btn-generate { 
@@ -116,7 +124,7 @@
         }
         .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Summary Card with Watermark */
+        /* Summary Card with Tiled Watermark */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); 
             backdrop-filter: blur(8px);
@@ -156,29 +164,21 @@
         .footer { text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 40px; font-weight: 600; }
         .results-section { display: none; margin-top: 30px; }
 
-        /* REFINED PRINT LOGIC */
         @media print {
             body { background: white; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .container { box-shadow: none; border: none; padding: 0; width: 100%; }
-            
-            /* Show Logo and Badge */
             .top-nav { border-bottom: 1px solid #eee; padding-bottom: 15px; flex-direction: column !important; }
             .logo { position: absolute !important; left: 0 !important; top: 10px !important; display: block !important; }
             .badge-container { display: flex !important; }
-            .badge-caption { color: var(--primary-brown) !important; }
-
-            /* Grid display with borders preserved */
             .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
             input, select { 
                 border: 1px solid #ccc !important; 
                 background: #fff !important; 
-                padding: 5px !important; 
                 font-weight: bold !important;
                 color: black !important;
                 -webkit-appearance: none;
                 appearance: none;
             }
-
             .btn-generate, .print-link { display: none !important; }
             .results-section { display: block !important; margin-top: 20px; }
             .summary-card { border: 1px solid #ccc; background: #fafafa !important; }
@@ -214,13 +214,17 @@
         </div>
         <div class="input-group"><label>Date of Birth</label><input type="date" id="dob" value="1965-10-03" onchange="calculateDefaultDOR()"></div>
         <div class="input-group"><label>Date of Entry</label><input type="date" id="doj" value="1995-01-01"></div>
+        
         <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation %</label><input type="number" id="commPercent" value="40" min="0" max="40"></div>
+        <div class="input-group"><label>Commutation Opted (%)</label>
+            <input type="number" id="commPercent" value="40" min="0" max="40">
+        </div>
+        
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
         <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
-        <div class="input-group"><label>Govt. Acc.</label>
+        <div class="input-group"><label>Govt. Accommodation</label>
             <select id="govtAcc">
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
@@ -344,13 +348,13 @@
         document.getElementById('resAgeNext').innerText = `${ageNext} Years`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Pension (Full)</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
             <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(lumpSum)}</span></div>
             <div class="data-row"><span>Total Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
             <div class="data-row"><span>Withheld Gratuity</span><span>${formatIndianCurrency(withheld)}</span></div>
-            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
+            <div class="data-row bold-row"><span>Net Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
