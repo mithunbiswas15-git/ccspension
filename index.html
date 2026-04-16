@@ -40,7 +40,7 @@
         .header-title h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 700; }
         .print-link { color: var(--leave-navy); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
-        /* Responsive Grid System */
+        /* Grid System */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -48,23 +48,21 @@
             margin-bottom: 20px; 
         }
         
-        /* Desktop: Move button to 3rd row, right side */
         .btn-generate { 
-            grid-column: span 2;
+            grid-column: span 1;
             background-color: var(--primary-brown); 
             color: white; 
             border: none; 
-            border-radius: 10px; 
+            border-radius: 8px; 
             font-weight: 700; 
             cursor: pointer; 
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
-            height: 42px;
+            height: 40px;
             align-self: end;
         }
         .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Mobile Optimization */
         @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; }
             .btn-generate { grid-column: span 1; order: 99; margin-top: 10px; }
@@ -109,9 +107,8 @@
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.9rem; }
         
-        /* Applied requested Colors */
         .title-a { background-color: var(--pension-clay); }
-        .title-b { background-color: var(--family-sand); color: #723e31; } /* Sand needs darker text for contrast */
+        .title-b { background-color: var(--family-sand); color: #723e31; }
         .title-c { background-color: var(--leave-navy); }
 
         .card-content { padding: 15px; }
@@ -159,16 +156,20 @@
         <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation %</label>
-            <select id="commPercent">
-                <option value="40">40%</option><option value="30">30%</option><option value="20">20%</option><option value="0">0%</option>
-            </select>
+        <div class="input-group"><label>Commutation Opted (%)</label>
+            <input type="number" id="commPercent" min="0" max="40" value="0" step="1" oninput="if(value>40)value=40;if(value<0)value=0;">
         </div>
         
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
         <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
+        <div class="input-group"><label>Govt. Accommodation?</label>
+            <select id="govtAcc">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
         
-        <button class="btn-generate" onclick="generateReport()">Generate Calculation Report</button>
+        <button class="btn-generate" onclick="generateReport()">Generate Report</button>
     </div>
 
     <div id="results" class="results-section">
@@ -244,8 +245,9 @@
         const dob = new Date(document.getElementById('dob').value);
         const doj = new Date(document.getElementById('doj').value);
         const dor = new Date(document.getElementById('dor').value);
-        const commP = parseInt(document.getElementById('commPercent').value);
+        const commP = parseInt(document.getElementById('commPercent').value) || 0;
         const retType = document.getElementById('retType').value;
+        const govtAcc = document.getElementById('govtAcc').value;
 
         if (basic <= 0 || isNaN(dob.getTime()) || isNaN(dor.getTime())) { 
             alert("Please provide valid Pay and Dates."); return; 
@@ -273,6 +275,7 @@
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
+        const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
 
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
         const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
@@ -290,7 +293,9 @@
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension<div><small>DR applied on Full Pension</small></div></span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
             <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(lumpSum)}</span></div>
-            <div class="data-row bold-row"><span>Net Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
+            <div class="data-row"><span>Total Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
+            <div class="data-row"><span>Withheld Gratuity</span><span>${formatIndianCurrency(withheld)}</span></div>
+            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
