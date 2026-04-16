@@ -40,7 +40,6 @@
         .header-title h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 700; }
         .print-link { color: var(--leave-navy); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
-        /* Grid System */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -84,6 +83,7 @@
 
         .results-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-out; }
         
+        /* Summary Statistics with Tiled Watermark */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); 
             backdrop-filter: blur(8px);
@@ -91,17 +91,49 @@
             border: 1px solid #e2e8f0;
             margin-bottom: 30px;
             position: relative;
+            overflow: hidden; /* Ensures watermarks don't spill out */
         }
-        .summary-header { background: rgba(217, 177, 142, 0.2); padding: 10px 20px; font-weight: 700; border-bottom: 1px solid #cbd5e1; }
+
+        /* Repeated Tiled Watermark Logic */
+        .watermark-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.05; /* Faint visibility */
+        }
+
+        .watermark-item {
+            font-size: 0.9rem;
+            font-weight: 900;
+            transform: rotate(-25deg);
+            white-space: nowrap;
+            margin: 20px;
+        }
+
+        .summary-header { 
+            background: rgba(217, 177, 142, 0.2); 
+            padding: 10px 20px; 
+            font-weight: 700; 
+            border-bottom: 1px solid #cbd5e1;
+            position: relative;
+            z-index: 1;
+        }
         
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); padding: 20px; gap: 20px; }
+        .summary-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            padding: 20px; 
+            gap: 20px; 
+            position: relative;
+            z-index: 1;
+        }
         .summary-item label { display: block; color: #64748b; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; }
         .summary-item div { font-size: 1.1rem; font-weight: 800; }
-
-        .watermark {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
-            font-size: 2.5rem; color: rgba(0, 0, 0, 0.04); font-weight: 900; pointer-events: none; white-space: nowrap;
-        }
 
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -114,7 +146,6 @@
         .card-content { padding: 15px; }
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; align-items: flex-start; }
         .data-row span:last-child { text-align: right; font-weight: 700; min-width: 90px; }
-        .data-row small { display: block; color: #666; font-size: 0.7rem; font-weight: 400; margin-top: 2px; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
         .footer { text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 40px; }
@@ -126,6 +157,7 @@
             .container { box-shadow: none; border: 1px solid #eee; padding: 0; width: 100%; }
             .btn-generate, .top-nav, .print-link { display: none !important; }
             .results-section { display: block !important; }
+            .watermark-overlay { opacity: 0.08; } /* Slightly darker for print visibility */
         }
     </style>
 </head>
@@ -174,7 +206,17 @@
 
     <div id="results" class="results-section">
         <div class="summary-card">
-            <div class="watermark">DRAFT CALCULATION</div>
+            <div class="watermark-overlay">
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+                <div class="watermark-item">DRAFT CALCULATION</div>
+            </div>
+
             <div class="summary-header">Summary Statistics</div>
             <div class="summary-grid">
                 <div class="summary-item"><label>Name</label><div id="resName"></div></div>
