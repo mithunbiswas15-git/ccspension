@@ -6,12 +6,11 @@
     <title>Pensionary Benefits & Leave Encashment Calculator</title>
     <style>
         :root {
-            --primary-crimson: #a51c30;
-            --navy-blue: #1a3a5a;
+            --primary-brown: #723e31;
+            --pension-clay: #a67564;
+            --family-sand: #d9b18e;
+            --leave-navy: #1a3a5a;
             --slate-bg: #f1f5f9;
-            --pension-green: #2d5a27;
-            --family-blue: #1a3a5a;
-            --leave-orange: #e68a39;
         }
 
         body { 
@@ -19,7 +18,7 @@
             background-color: var(--slate-bg); 
             color: #333; 
             margin: 0; 
-            padding: 20px; 
+            padding: 10px; 
             padding-bottom: 80px; 
         }
 
@@ -27,7 +26,7 @@
             max-width: 1200px; 
             margin: 0 auto; 
             background: white; 
-            padding: 40px; 
+            padding: 25px; 
             border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             position: relative; 
@@ -35,16 +34,46 @@
 
         .top-nav { display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .logo { font-weight: 800; font-size: 1.5rem; color: #333; }
-        .logo span { color: var(--primary-crimson); }
+        .logo span { color: var(--primary-brown); }
 
         .header-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .header-title h1 { font-size: 1.4rem; margin: 0; color: #111; font-weight: 700; }
-        .print-link { color: var(--navy-blue); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .header-title h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 700; }
+        .print-link { color: var(--leave-navy); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
-        /* Full Input Grid restored */
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .input-group { grid-column: span 1; }
+        /* Responsive Grid System */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
         
+        /* Desktop: Move button to 3rd row, right side */
+        .btn-generate { 
+            grid-column: span 2;
+            background-color: var(--primary-brown); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            height: 42px;
+            align-self: end;
+        }
+        .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .btn-generate { grid-column: span 1; order: 99; margin-top: 10px; }
+            .header-title { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .benefit-columns { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
         input, select { 
             width: 100%; 
@@ -55,24 +84,8 @@
             font-size: 0.9rem;
         }
 
-        .btn-generate { 
-            grid-column: span 4;
-            background-color: var(--primary-crimson); 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 1rem;
-            transition: all 0.2s;
-            height: 50px;
-            margin-top: 10px;
-        }
-        .btn-generate:hover { background-color: #8a1728; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(165,28,48,0.2); }
-
         .results-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-out; }
         
-        /* Summary Statistics Glassmorphism restored */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); 
             backdrop-filter: blur(8px);
@@ -81,7 +94,7 @@
             margin-bottom: 30px;
             position: relative;
         }
-        .summary-header { background: rgba(203, 213, 225, 0.5); padding: 10px 20px; font-weight: 700; border-bottom: 1px solid #cbd5e1; }
+        .summary-header { background: rgba(217, 177, 142, 0.2); padding: 10px 20px; font-weight: 700; border-bottom: 1px solid #cbd5e1; }
         
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); padding: 20px; gap: 20px; }
         .summary-item label { display: block; color: #64748b; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; }
@@ -94,17 +107,17 @@
 
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.95rem; }
+        .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.9rem; }
         
-        .title-a { background-color: var(--pension-green); }
-        .title-b { background-color: var(--family-blue); }
-        .title-c { background-color: var(--leave-orange); }
+        /* Applied requested Colors */
+        .title-a { background-color: var(--pension-clay); }
+        .title-b { background-color: var(--family-sand); color: #723e31; } /* Sand needs darker text for contrast */
+        .title-c { background-color: var(--leave-navy); }
 
         .card-content { padding: 15px; }
-        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; font-weight: 500; align-items: flex-start; }
-        .data-row span:last-child { text-align: right; font-weight: 700; min-width: 100px; }
-        .data-row small { display: block; color: #666; font-size: 0.75rem; font-weight: 400; margin-top: 2px; }
-        .data-row:last-child { border-bottom: none; }
+        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; align-items: flex-start; }
+        .data-row span:last-child { text-align: right; font-weight: 700; min-width: 90px; }
+        .data-row small { display: block; color: #666; font-size: 0.7rem; font-weight: 400; margin-top: 2px; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
         .footer { text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 40px; }
@@ -114,10 +127,8 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: 1px solid #eee; padding: 0; width: 100%; }
-            .btn-generate, .grid, .print-link, .footer, .top-nav { display: none !important; }
+            .btn-generate, .top-nav, .print-link { display: none !important; }
             .results-section { display: block !important; }
-            .summary-card { border: 1px solid #ccc; background: #fafafa !important; }
-            .benefit-card { border: 1px solid #ccc; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -134,7 +145,7 @@
     </div>
 
     <div class="grid">
-        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Full Name"></div>
+        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Name"></div>
         <div class="input-group"><label>Retirement Type</label>
             <select id="retType" onchange="calculateDefaultDOR()">
                 <option value="Superannuation">Superannuation</option>
@@ -148,24 +159,14 @@
         <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation Opted</label>
+        <div class="input-group"><label>Commutation %</label>
             <select id="commPercent">
-                <option value="40">40%</option>
-                <option value="30">30%</option>
-                <option value="20">20%</option>
-                <option value="10">10%</option>
-                <option value="0">0%</option>
+                <option value="40">40%</option><option value="30">30%</option><option value="20">20%</option><option value="0">0%</option>
             </select>
         </div>
         
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
         <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
-        <div class="input-group"><label>Govt. Accommodation?</label>
-            <select id="govtAcc">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-            </select>
-        </div>
         
         <button class="btn-generate" onclick="generateReport()">Generate Calculation Report</button>
     </div>
@@ -178,7 +179,7 @@
                 <div class="summary-item"><label>Name</label><div id="resName"></div></div>
                 <div class="summary-item"><label>Basic Pay</label><div id="resBasicPay"></div></div>
                 <div class="summary-item"><label>Qualifying Service</label><div id="resService"></div></div>
-                <div class="summary-item"><label>Comm. Factor Age</label><div id="resAgeNext"></div></div>
+                <div class="summary-item"><label>Age Next Birthday</label><div id="resAgeNext"></div></div>
             </div>
         </div>
 
@@ -245,7 +246,6 @@
         const dor = new Date(document.getElementById('dor').value);
         const commP = parseInt(document.getElementById('commPercent').value);
         const retType = document.getElementById('retType').value;
-        const govtAcc = document.getElementById('govtAcc').value;
 
         if (basic <= 0 || isNaN(dob.getTime()) || isNaN(dor.getTime())) { 
             alert("Please provide valid Pay and Dates."); return; 
@@ -273,7 +273,6 @@
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
-        const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
 
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
         const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
@@ -291,9 +290,7 @@
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension<div><small>DR applied on Full Pension</small></div></span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
             <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(lumpSum)}</span></div>
-            <div class="data-row"><span>Total Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
-            <div class="data-row"><span>Withheld Gratuity</span><span>${formatIndianCurrency(withheld)}</span></div>
-            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
+            <div class="data-row bold-row"><span>Net Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
