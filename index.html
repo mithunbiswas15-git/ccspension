@@ -9,7 +9,7 @@
             --primary-brown: #723e31;
             --pension-clay: #a67564;
             --family-sand: #d9b18e;
-            --leave-navy: #1a3a5a;
+            --official-blue: #1a3a5a; /* Navy Blue for Part-C */
             --slate-bg: #f1f5f9;
         }
 
@@ -75,7 +75,7 @@
             position: absolute;
             right: 0;
             top: 15px;
-            color: var(--leave-navy); 
+            color: var(--official-blue); 
             text-decoration: none; 
             font-weight: 600; 
             display: flex; 
@@ -87,7 +87,6 @@
         .header-title { text-align: center; margin-bottom: 25px; }
         .header-title h1 { font-size: 1.3rem; margin: 0; color: #111; font-weight: 700; }
 
-        /* Grid System */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -154,7 +153,7 @@
         
         .title-a { background-color: var(--pension-clay); }
         .title-b { background-color: var(--family-sand); color: #723e31; }
-        .title-c { background-color: var(--leave-navy); }
+        .title-c { background-color: var(--official-blue); } /* Forcefully set to blue */
 
         .card-content { padding: 15px; }
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
@@ -243,7 +242,7 @@
                 <div class="card-content" id="partB"></div>
             </div>
             <div class="benefit-card">
-                <div class="card-title title-c: Part-C: Leave Encashment">Part-C: Leave Encashment</div>
+                <div class="card-title title-c">Part-C: Leave Encashment</div>
                 <div class="card-content" id="partC"></div>
             </div>
         </div>
