@@ -32,6 +32,7 @@
             position: relative; 
         }
 
+        /* --- Desktop Header --- */
         .top-nav { 
             display: flex; 
             flex-direction: column;
@@ -52,23 +53,9 @@
         }
         .logo span { color: var(--primary-brown); }
 
-        .badge-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .badge-container img {
-            max-width: 180px;
-            height: auto;
-        }
-        .badge-caption {
-            font-size: 0.9rem;
-            color: var(--primary-brown);
-            margin-top: 8px;
-            font-weight: 700;
-        }
+        .badge-container { text-align: center; }
+        .badge-container img { max-width: 180px; height: auto; }
+        .badge-caption { font-size: 0.9rem; color: var(--primary-brown); margin-top: 8px; font-weight: 700; }
 
         .print-link { 
             position: absolute;
@@ -83,9 +70,10 @@
             cursor: pointer; 
         }
 
-        .header-title { text-align: center; margin-bottom: 25px; }
-        .header-title h1 { font-size: 1.3rem; margin: 0; color: #111; font-weight: 700; }
+        .header-title { text-align: center; margin: 20px 0; }
+        .header-title h1 { font-size: 1.3rem; color: #111; font-weight: 700; }
 
+        /* --- Desktop Grid --- */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -95,56 +83,52 @@
         
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
-        
-        /* Date inputs styled to handle text-masking for dd.mm.yyyy */
         input, select { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #d1d5db; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 0.9rem;
-            background-color: #ffffff !important;
+            width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; 
+            box-sizing: border-box; font-size: 1rem; background-color: #ffffff !important;
         }
 
         .btn-generate { 
             grid-column: span 1;
             background-color: var(--primary-brown); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            height: 40px;
-            align-self: end;
+            color: white; border: none; border-radius: 8px; 
+            font-weight: 700; cursor: pointer; font-size: 0.9rem;
+            transition: 0.2s; height: 45px; align-self: end;
         }
         .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
+        /* --- Mobile Optimization (Phone View) --- */
+        @media (max-width: 768px) {
+            .container { padding: 15px; border-radius: 10px; }
+            .logo { position: static; text-align: center; margin-bottom: 10px; }
+            .print-link { position: static; justify-content: center; margin-top: 10px; }
+            
+            .grid { grid-template-columns: 1fr; gap: 12px; }
+            .btn-generate { grid-column: span 1; margin-top: 10px; height: 50px; font-size: 1rem; }
+            
+            .summary-grid { grid-template-columns: 1fr 1fr !important; gap: 15px !important; }
+            .benefit-columns { grid-template-columns: 1fr !important; gap: 15px; }
+            
+            .badge-container img { max-width: 140px; }
+            .header-title h1 { font-size: 1.1rem; }
+        }
+
+        /* Results & Watermark */
         .summary-card { 
-            background: rgba(226, 232, 240, 0.4); 
-            backdrop-filter: blur(8px);
-            border-radius: 12px; 
-            border: 1px solid #e2e8f0;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
+            background: rgba(226, 232, 240, 0.4); backdrop-filter: blur(8px);
+            border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;
+            position: relative; overflow: hidden;
         }
         .summary-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 200%; height: 200%;
+            content: ""; position: absolute; top: 0; left: 0; width: 200%; height: 200%;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Ctext x='50' y='120' font-family='Arial' font-size='24' font-weight='900' fill='rgba(0,0,0,0.06)' transform='rotate(-25, 200, 100)'%3EDRAFT CALCULATION%3C/text%3E%3C/svg%3E");
-            background-repeat: repeat;
-            pointer-events: none;
-            z-index: 0;
+            background-repeat: repeat; z-index: 0;
         }
 
         .summary-header { position: relative; z-index: 1; background: rgba(217, 177, 142, 0.2); padding: 10px 20px; font-weight: 700; border-bottom: 1px solid #cbd5e1; }
         .summary-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); padding: 20px; gap: 20px; }
         .summary-item label { display: block; color: #64748b; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; }
-        .summary-item div { font-size: 1.1rem; font-weight: 800; }
+        .summary-item div { font-size: 1rem; font-weight: 800; }
 
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
@@ -158,40 +142,18 @@
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
-        .footer { 
-            text-align: center; 
-            color: #64748b; 
-            font-size: 0.85rem; 
-            margin-top: 40px; 
-            font-weight: 600; 
-            line-height: 1.6;
-        }
-        .footer a {
-            color: var(--official-blue);
-            text-decoration: none;
-        }
-
+        .footer { text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 40px; font-weight: 600; line-height: 1.6; }
+        .footer a { color: var(--official-blue); text-decoration: none; }
         .results-section { display: none; margin-top: 30px; }
 
+        /* Print Logic */
         @media print {
-            body { background: white; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .container { box-shadow: none; border: none; padding: 0; width: 100%; }
-            .top-nav { border-bottom: 1px solid #eee; padding-bottom: 15px; flex-direction: column !important; }
-            .logo { position: absolute !important; left: 0 !important; top: 10px !important; display: block !important; }
-            .badge-container { display: flex !important; }
-            .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
-            input, select { 
-                border: 1px solid #ccc !important; 
-                background: #fff !important; 
-                font-weight: bold !important;
-                color: black !important;
-            }
+            body { background: white; padding: 0; -webkit-print-color-adjust: exact; }
+            .container { box-shadow: none; border: none; width: 100%; }
             .btn-generate, .print-link { display: none !important; }
-            .results-section { display: block !important; margin-top: 20px; }
-            .summary-card { border: 1px solid #ccc; background: #fafafa !important; }
-            .benefit-card { border: 1px solid #ccc; page-break-inside: avoid; }
-            .card-title { background: #333 !important; color: white !important; }
-            .footer { color: black !important; }
+            .results-section { display: block !important; }
+            .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+            input, select { border: 1px solid #ccc !important; font-weight: bold; }
         }
     </style>
 </head>
@@ -220,22 +182,17 @@
                 <option value="Compulsory Retirement">Compulsory Retirement</option>
             </select>
         </div>
-        <div class="input-group"><label>Date of Birth</label><input type="text" id="dob" placeholder="dd.mm.yyyy" value="01.01.1967" onchange="calculateDefaultDOR()"></div>
-        <div class="input-group"><label>Date of Entry</label><input type="text" id="doj" placeholder="dd.mm.yyyy" value="01.01.1996"></div>
-        
+        <div class="input-group"><label>Date of Birth</label><input type="text" id="dob" placeholder="01.01.1967" value="01.01.1967" onchange="calculateDefaultDOR()"></div>
+        <div class="input-group"><label>Date of Entry</label><input type="text" id="doj" placeholder="01.01.1996" value="01.01.1996"></div>
         <div class="input-group"><label>Date of Retirement</label><input type="text" id="dor" placeholder="dd.mm.yyyy"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation Opted (%)</label>
-            <input type="number" id="commPercent" value="0" min="0" max="40">
-        </div>
-        
+        <div class="input-group"><label>Commutation Opted (%)</label><input type="number" id="commPercent" value="0" min="0" max="40"></div>
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
         <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
         <div class="input-group"><label>Govt. Accommodation</label>
             <select id="govtAcc">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
+                <option value="No">No</option><option value="Yes">Yes</option>
             </select>
         </div>
         <button class="btn-generate" onclick="generateReport()">Generate Report</button>
@@ -247,8 +204,8 @@
             <div class="summary-grid">
                 <div class="summary-item"><label>Name</label><div id="resName"></div></div>
                 <div class="summary-item"><label>Basic Pay</label><div id="resBasicPay"></div></div>
-                <div class="summary-item"><label>Qualifying Service</label><div id="resService"></div></div>
-                <div class="summary-item"><label>Commutation Age</label><div id="resAgeNext"></div></div>
+                <div class="summary-item"><label>Service</label><div id="resService"></div></div>
+                <div class="summary-item"><label>Factor Age</label><div id="resAgeNext"></div></div>
             </div>
         </div>
 
@@ -275,32 +232,18 @@
 </div>
 
 <script>
-    const commutationTable = {
-        20: 9.188, 21: 9.187, 22: 9.186, 23: 9.185, 24: 9.184, 25: 9.183, 26: 9.182, 27: 9.180, 28: 9.178, 29: 9.176,
-        30: 9.173, 31: 9.169, 32: 9.164, 33: 9.159, 34: 9.152, 35: 9.145, 36: 9.145, 37: 9.126, 38: 9.116, 39: 9.103,
-        40: 9.090, 41: 9.075, 42: 9.059, 43: 9.040, 44: 9.019, 45: 8.996, 46: 8.971, 47: 8.943, 48: 8.913, 49: 8.881,
-        50: 8.846, 51: 8.808, 52: 8.768, 53: 8.724, 54: 8.678, 55: 8.627, 56: 8.572, 57: 8.512, 58: 8.446, 59: 8.371,
-        60: 8.287, 61: 8.194, 62: 8.093, 63: 7.982, 64: 7.862, 65: 7.731, 66: 7.591, 67: 7.431, 68: 7.262, 69: 7.083,
-        70: 6.897, 71: 6.701, 72: 6.499, 73: 6.289, 74: 6.075, 75: 5.857, 76: 5.638, 77: 5.421, 78: 5.205, 79: 4.993,
-        80: 4.784, 81: 4.581
-    };
+    const commutationTable = { 20: 9.188, 21: 9.187, 22: 9.186, 23: 9.185, 24: 9.184, 25: 9.183, 26: 9.182, 27: 9.180, 28: 9.178, 29: 9.176, 30: 9.173, 31: 9.169, 32: 9.164, 33: 9.159, 34: 9.152, 35: 9.145, 36: 9.145, 37: 9.126, 38: 9.116, 39: 9.103, 40: 9.090, 41: 9.075, 42: 9.059, 43: 9.040, 44: 9.019, 45: 8.996, 46: 8.971, 47: 8.943, 48: 8.913, 49: 8.881, 50: 8.846, 51: 8.808, 52: 8.768, 53: 8.724, 54: 8.678, 55: 8.627, 56: 8.572, 57: 8.512, 58: 8.446, 59: 8.371, 60: 8.287, 61: 8.194, 62: 8.093, 63: 7.982, 64: 7.862, 65: 7.731, 66: 7.591, 67: 7.431, 68: 7.262, 69: 7.083, 70: 6.897, 71: 6.701, 72: 6.499, 73: 6.289, 74: 6.075, 75: 5.857, 76: 5.638, 77: 5.421, 78: 5.205, 79: 4.993, 80: 4.784, 81: 4.581 };
 
-    // Helper to parse dd.mm.yyyy into Date Object
     function parseCustomDate(str) {
         if (!str) return null;
         const parts = str.split('.');
-        if (parts.length !== 3) return null;
-        // Month is 0-indexed in JS Date
-        return new Date(parts[2], parts[1] - 1, parts[0]);
+        return (parts.length === 3) ? new Date(parts[2], parts[1] - 1, parts[0]) : null;
     }
 
-    // Helper to format Date Object to dd.mm.yyyy
     function formatCustomDate(dateObj) {
         if (!dateObj || isNaN(dateObj.getTime())) return "";
-        let d = dateObj.getDate();
-        let m = dateObj.getMonth() + 1;
-        let y = dateObj.getFullYear();
-        return (d < 10 ? '0' + d : d) + '.' + (m < 10 ? '0' + m : m) + '.' + y;
+        let d = dateObj.getDate(); let m = dateObj.getMonth() + 1;
+        return (d < 10 ? '0'+d : d) + '.' + (m < 10 ? '0'+m : m) + '.' + dateObj.getFullYear();
     }
 
     function formatIndianCurrency(num) {
@@ -312,45 +255,28 @@
     }
 
     function calculateDefaultDOR() {
-        const dobStr = document.getElementById('dob').value;
-        const dob = parseCustomDate(dobStr);
+        const dob = parseCustomDate(document.getElementById('dob').value);
         if (!dob) return;
-        
         const retType = document.getElementById('retType').value;
         if (retType === "Superannuation") {
-            let retYear = dob.getFullYear() + 60;
-            let retMonth = dob.getMonth();
-            
-            // Rule: If born on 1st, retire on last day of previous month
-            if (dob.getDate() === 1) {
-                retMonth -= 1;
-                if (retMonth < 0) { retMonth = 11; retYear -= 1; }
-            }
-            
-            const dorDate = new Date(retYear, retMonth + 1, 0);
-            document.getElementById('dor').value = formatCustomDate(dorDate);
+            let retYear = dob.getFullYear() + 60; let retMonth = dob.getMonth();
+            if (dob.getDate() === 1) { retMonth -= 1; if (retMonth < 0) { retMonth = 11; retYear -= 1; } }
+            document.getElementById('dor').value = formatCustomDate(new Date(retYear, retMonth + 1, 0));
         }
     }
 
     function generateReport() {
         const basic = parseInt(document.getElementById('basicPay').value) || 0;
         const daRate = parseInt(document.getElementById('daPercent').value) || 0;
-        
         const dob = parseCustomDate(document.getElementById('dob').value);
         const doj = parseCustomDate(document.getElementById('doj').value);
         const dor = parseCustomDate(document.getElementById('dor').value);
-        
         const commP = parseInt(document.getElementById('commPercent').value) || 0;
-        const retType = document.getElementById('retType').value;
         const govtAcc = document.getElementById('govtAcc').value;
 
-        if (basic <= 0 || !dob || !dor) { 
-            alert("Please provide valid Pay and Dates (dd.mm.yyyy)."); return; 
-        }
+        if (basic <= 0 || !dob || !dor) { alert("Check Pay and Dates (dd.mm.yyyy)"); return; }
 
-        let start = new Date(doj);
-        let inclusiveEnd = new Date(dor);
-        inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
+        let start = new Date(doj); let inclusiveEnd = new Date(dor); inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
         let yrs = inclusiveEnd.getFullYear() - start.getFullYear();
         let mos = inclusiveEnd.getMonth() - start.getMonth();
         let days = inclusiveEnd.getDate() - start.getDate();
@@ -362,55 +288,42 @@
         const pensionBefore = basic / 2;
         const commAmt = Math.ceil((pensionBefore * commP) / 100);
         
-        let ageOnRetirement = dor.getFullYear() - dob.getFullYear();
-        let m = dor.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && dor.getDate() < dob.getDate())) ageOnRetirement--;
-        let ageNext = Math.max(retType === "Superannuation" ? 61 : 0, ageOnRetirement + 1);
+        let ageRet = dor.getFullYear() - dob.getFullYear();
+        if (dor.getMonth() < dob.getMonth() || (dor.getMonth() === dob.getMonth() && dor.getDate() < dob.getDate())) ageRet--;
+        let ageNext = Math.max(document.getElementById('retType').value === "Superannuation" ? 61 : 0, ageRet + 1);
 
         const factor = commutationTable[ageNext] || 0;
-        const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
         const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
-
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
         const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
-        const elEncash = (emoluments / 30) * elDays;
-        const hplEncash = (((basic / 2) + ((basic / 2) * daRate / 100)) / 30) * hplDays;
 
         document.getElementById('results').style.display = "block";
         document.getElementById('resName').innerText = document.getElementById('name').value || 'N/A';
         document.getElementById('resBasicPay').innerText = formatIndianCurrency(basic);
         document.getElementById('resService').innerText = `${yrs}y ${mos}m ${days}d`;
-        document.getElementById('resAgeNext').innerText = `${ageNext} Years`;
+        document.getElementById('resAgeNext').innerText = `${ageNext}y`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
-            <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
-            <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
-            <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(lumpSum)}</span></div>
-            <div class="data-row"><span>Total Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
-            <div class="data-row"><span>Withheld Gratuity</span><span>${formatIndianCurrency(withheld)}</span></div>
-            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
+            <div class="data-row"><span>Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Commuted</span><span>${formatIndianCurrency(commAmt)}</span></div>
+            <div class="data-row"><span>Residuary</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
+            <div class="data-row"><span>Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
+            <div class="data-row bold-row"><span>Net Payable</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
-            <div class="data-row"><span>Enhanced Rate</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
-            <div class="data-row"><span>Ordinary Rate</span><span>${formatIndianCurrency(Math.max(9000, basic * 0.3))}</span></div>
+            <div class="data-row"><span>Enhanced</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Ordinary</span><span>${formatIndianCurrency(Math.max(9000, basic * 0.3))}</span></div>
         `;
 
         document.getElementById('partC').innerHTML = `
-            <div class="data-row"><span>EL Encash (${elDays}d)</span><span>${formatIndianCurrency(elEncash)}</span></div>
-            <div class="data-row"><span>HPL Encash (${hplDays}d)</span><span>${formatIndianCurrency(hplEncash)}</span></div>
-            <div class="data-row bold-row"><span>Total Encashment</span><span>${formatIndianCurrency(elEncash + hplEncash)}</span></div>
+            <div class="data-row"><span>EL Encash</span><span>${formatIndianCurrency((emoluments/30)*elDays)}</span></div>
+            <div class="data-row"><span>HPL Encash</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
+            <div class="data-row bold-row"><span>Total</span><span>${formatIndianCurrency(((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
         `;
-
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
-    
-    // Set initial DOR on load
-    window.onload = function() {
-        calculateDefaultDOR();
-    };
+    window.onload = calculateDefaultDOR;
 </script>
 </body>
 </html>
