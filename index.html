@@ -6,11 +6,12 @@
     <title>Pensionary Benefits & Leave Encashment Calculator</title>
     <style>
         :root {
-            --primary-brown: #723e31;
-            --pension-clay: #a67564;
-            --family-sand: #d9b18e;
-            --leave-navy: #1a3a5a;
+            --primary-crimson: #a51c30;
+            --navy-blue: #1a3a5a;
             --slate-bg: #f1f5f9;
+            --pension-green: #2d5a27;
+            --family-blue: #1a3a5a;
+            --leave-orange: #e68a39;
         }
 
         body { 
@@ -18,7 +19,7 @@
             background-color: var(--slate-bg); 
             color: #333; 
             margin: 0; 
-            padding: 10px; 
+            padding: 20px; 
             padding-bottom: 80px; 
         }
 
@@ -26,52 +27,58 @@
             max-width: 1200px; 
             margin: 0 auto; 
             background: white; 
-            padding: 25px; 
+            padding: 40px; 
             border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             position: relative; 
         }
 
-        .top-nav { display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        /* Tiled Watermark Toggled */
+        . summary-card.watermarked { 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Ctext x='50' y='120' font-family='Arial' font-size='24' font-weight='900' fill='rgba(0,0,0,0.06)' transform='rotate(-25, 200, 100)'%3EDRAFT CALCULATION%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        /* Top Header Navigation style */
+        .top-nav { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* To align items across the width */
+            margin-bottom: 20px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 10px; 
+        }
         .logo { font-weight: 800; font-size: 1.5rem; color: #333; }
-        .logo span { color: var(--primary-brown); }
+        .logo span { color: var(--primary-crimson); }
+
+        /* Style for the badge container */
+        .badge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            margin-right: -100px; /* Pull it slightly to the left relative to CCSPension and print */
+        }
+        .badge-container img {
+            max-width: 150px; /* Control badge size */
+            height: auto;
+        }
+        .badge-caption {
+            font-size: 0.8rem;
+            color: var(--navy-blue);
+            margin-top: 5px;
+            font-weight: 600;
+        }
 
         .header-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .header-title h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 700; }
-        .print-link { color: var(--leave-navy); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .header-title h1 { font-size: 1.4rem; margin: 0; color: #111; font-weight: 700; }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; 
-            margin-bottom: 20px; 
-        }
-        
-        .btn-generate { 
-            grid-column: span 1;
-            background-color: var(--primary-brown); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            height: 40px;
-            align-self: end;
-        }
-        .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+        .print-link { color: var(--navy-blue); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-            .btn-generate { grid-column: span 1; order: 99; margin-top: 10px; }
-            .header-title { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .benefit-columns { grid-template-columns: 1fr; }
-            .summary-grid { grid-template-columns: 1fr 1fr; }
-        }
-
+        /* Input Grid restored to mimic mockup */
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 20px; }
         .input-group { grid-column: span 1; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
+        
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.85rem; color: #444; }
         input, select { 
             width: 100%; 
             padding: 10px; 
@@ -81,73 +88,66 @@
             font-size: 0.9rem;
         }
 
+        /* The Crimson Button from image */
+        .btn-generate { 
+            grid-column: span 2;
+            background-color: var(--primary-crimson); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            height: 45px;
+            margin-top: 22px;
+        }
+        .btn-generate:hover { background-color: #8a1728; transform: translateY(-1px); }
+
+        /* Results section */
         .results-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-out; }
         
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); 
             backdrop-filter: blur(8px);
             border-radius: 12px; 
+            padding: 0;
+            overflow: hidden;
             border: 1px solid #e2e8f0;
             margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
         }
-
-        /* Continuous LARGE Watermark logic */
-        .summary-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 200%; height: 200%;
-            /* Large SVG Tiling */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Ctext x='50' y='120' font-family='Arial' font-size='24' font-weight='900' fill='rgba(0,0,0,0.06)' transform='rotate(-25, 200, 100)'%3EDRAFT CALCULATION%3C/text%3E%3C/svg%3E");
-            background-repeat: repeat;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .summary-header { 
-            background: rgba(217, 177, 142, 0.2); 
-            padding: 10px 20px; 
-            font-weight: 700; 
-            border-bottom: 1px solid #cbd5e1;
-            position: relative;
-            z-index: 1;
-        }
+        .summary-header { background: rgba(203, 213, 225, 0.5); padding: 10px 20px; font-weight: 700; border-bottom: 1px solid #cbd5e1; }
         
-        .summary-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            padding: 20px; 
-            gap: 20px; 
-            position: relative;
-            z-index: 1;
-        }
-        .summary-item label { display: block; color: #64748b; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); padding: 20px; gap: 20px;}
+        .summary-item label { color: #64748b; margin-bottom: 5px; }
         .summary-item div { font-size: 1.1rem; font-weight: 800; }
 
+        /* Benefit Columns */
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.9rem; }
+        .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.95rem; }
         
-        .title-a { background-color: var(--pension-clay); }
-        .title-b { background-color: var(--family-sand); color: #723e31; }
-        .title-c { background-color: var(--leave-navy); }
+        .title-a { background-color: var(--pension-green); }
+        .title-b { background-color: var(--family-blue); }
+        .title-c { background-color: var(--leave-orange); }
 
         .card-content { padding: 15px; }
-        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; align-items: flex-start; }
-        .data-row span:last-child { text-align: right; font-weight: 700; min-width: 90px; }
-        .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
+        .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; font-weight: 500; }
+        .data-row:last-child { border-bottom: none; }
+        .bold-row { font-weight: 700; border-top: 1px solid #e2e8f0; margin-top: 5px; padding-top: 10px; }
 
         .footer { text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 40px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         @media print {
             body { background: white; padding: 0; }
-            .container { box-shadow: none; border: 1px solid #eee; padding: 0; width: 100%; }
-            .btn-generate, .top-nav, .print-link { display: none !important; }
+            .container { box-shadow: none; border: none; padding: 0; width: 100%; }
+            .btn-generate, .top-nav, .print-link, .footer, input[type="range"], .badge-container { display: none !important; }
             .results-section { display: block !important; }
-            .summary-card::before { opacity: 0.12; } /* Darker for official print */
+            .summary-card.watermarked { border: 1px solid #aaa; background: #fafafa !important; -webkit-print-color-adjust: exact;}
+            .benefit-card { border: 1px solid #aaa; }
+            .card-title { background: #333 !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -156,46 +156,51 @@
 <div class="container">
     <div class="top-nav">
         <div class="logo">CCS<span>PENSION</span></div>
+        
+        <div class="badge-container">
+            <img src="https://i.ibb.co/C3KcMTy2/ccspension-background-2.jpg" alt="Based on CCS Pension Rule, 2021">
+            <div class="badge-caption">Verified Rule Compliance</div>
+        </div>
+
+        <div class="print-link" onclick="window.print()">🖨️ Print Report</div>
     </div>
 
     <div class="header-title">
         <h1>Pensionary Benefits & Leave Encashment Calculator</h1>
-        <div class="print-link" onclick="window.print()">🖨️ Print Report</div>
     </div>
 
     <div class="grid">
-        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Name"></div>
-        <div class="input-group"><label>Retirement Type</label>
+        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Full Name"></div>
+        <div class="input-group"><label>Type</label>
             <select id="retType" onchange="calculateDefaultDOR()">
                 <option value="Superannuation">Superannuation</option>
                 <option value="Voluntary Retirement">Voluntary Retirement</option>
-                <option value="Compulsory Retirement">Compulsory Retirement</option>
             </select>
         </div>
         <div class="input-group"><label>Date of Birth</label><input type="date" id="dob" value="1965-10-03" onchange="calculateDefaultDOR()"></div>
         <div class="input-group"><label>Date of Entry</label><input type="date" id="doj" value="1995-01-01"></div>
-        
         <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
-        <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation Opted (%)</label>
-            <input type="number" id="commPercent" min="0" max="40" value="0" step="1" oninput="if(value>40)value=40;if(value<0)value=0;">
-        </div>
         
-        <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
-        <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
-        <div class="input-group"><label>Govt. Accommodation?</label>
-            <select id="govtAcc">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
+        <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
+        <div class="input-group"><label>Commutation %</label>
+            <select id="commPercent">
+                <option value="40">40%</option>
+                <option value="30">30%</option>
+                <option value="20">20%</option>
+                <option value="0">0%</option>
             </select>
         </div>
+        <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
+        <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
         
-        <button class="btn-generate" onclick="generateReport()">Generate Report</button>
+        <button class="btn-generate" onclick="generateReport()">Generate Calculation Report</button>
     </div>
 
     <div id="results" class="results-section">
-        <div class="summary-card">
+        <h2 style="font-size: 1.1rem; margin-bottom: 15px;">Results</h2>
+        
+        <div class="summary-card watermarked">
             <div class="summary-header">Summary Statistics</div>
             <div class="summary-grid">
                 <div class="summary-item"><label>Name</label><div id="resName"></div></div>
@@ -263,60 +268,66 @@
     function generateReport() {
         const basic = parseInt(document.getElementById('basicPay').value) || 0;
         const daRate = parseInt(document.getElementById('daPercent').value) || 0;
-        const dob = new Date(document.getElementById('dob').value);
         const doj = new Date(document.getElementById('doj').value);
+        const dob = new Date(document.getElementById('dob').value);
         const dor = new Date(document.getElementById('dor').value);
-        const commP = parseInt(document.getElementById('commPercent').value) || 0;
+        const commP = parseInt(document.getElementById('commPercent').value);
         const retType = document.getElementById('retType').value;
-        const govtAcc = document.getElementById('govtAcc').value;
 
-        if (basic <= 0 || isNaN(dob.getTime()) || isNaN(dor.getTime())) { 
+        if (basic <= 0 || isNaN(doj.getTime()) || isNaN(dor.getTime())) { 
             alert("Please provide valid Pay and Dates."); return; 
         }
 
+        // Qualitative Service (Inclusive)
         let start = new Date(doj);
         let inclusiveEnd = new Date(dor);
-        inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
+        inclusiveEnd.setDate(inclusiveEnd.getDate() + 1); // Add 1 day to end to make it inclusive
+
         let yrs = inclusiveEnd.getFullYear() - start.getFullYear();
         let mos = inclusiveEnd.getMonth() - start.getMonth();
         let days = inclusiveEnd.getDate() - start.getDate();
-        if (days < 0) { mos--; let pm = new Date(inclusiveEnd.getFullYear(), inclusiveEnd.getMonth(), 0); days += pm.getDate(); }
-        if (mos < 0) { yrs--; mos += 12; }
+        if (days < 0) {
+            mos--;
+            let prevMonth = new Date(inclusiveEnd.getFullYear(), inclusiveEnd.getMonth(), 0);
+            days += prevMonth.getDate();
+        }
+        if (mos < 0) {
+            yrs--;
+            mos += 12;
+        }
 
         let periods = Math.min(66, (yrs * 2) + (mos >= 9 ? 3 : (mos >= 3 ? 1 : 0)));
         const emoluments = basic + (basic * daRate / 100);
         const pensionBefore = basic / 2;
         const commAmt = Math.ceil((pensionBefore * commP) / 100);
         
+        // --- Calculate age on next birthday for commutation ---
         let ageOnRetirement = dor.getFullYear() - dob.getFullYear();
         let m = dor.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && dor.getDate() < dob.getDate())) ageOnRetirement--;
-        let ageNext = Math.max(retType === "Superannuation" ? 61 : 0, ageOnRetirement + 1);
+        if (m < 0 || (m === 0 && dor.getDate() < dob.getDate())) { ageOnRetirement--; }
+        let ageNext = Math.max(retType === "Superannuation" ? 61 : 0, ageOnRetirement + 1); // Superannuation cases generally commutation starts age 61. For others, it's actual age + 1
 
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
-        const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
 
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
-        const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
-        const elEncash = (emoluments / 30) * elDays;
-        const hplEncash = (((basic / 2) + ((basic / 2) * daRate / 100)) / 30) * hplDays;
+        const hplDaysToEncash = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
+        const elEncashAmt = (emoluments / 30) * elDays;
+        const hplEncashAmt = (((basic / 2) + ((basic / 2) * (daRate / 100))) / 30) * hplDaysToEncash;
 
         document.getElementById('results').style.display = "block";
-        document.getElementById('resName').innerText = document.getElementById('name').value || 'N/A';
+        document.getElementById('resName').innerText = document.getElementById('name').value || 'Retiree Name';
         document.getElementById('resBasicPay').innerText = formatIndianCurrency(basic);
-        document.getElementById('resService').innerText = `${yrs}Y ${mos}M ${days}D`;
+        document.getElementById('resService').innerText = `${yrs} Years ${mos} Months ${days} Days`;
         document.getElementById('resAgeNext').innerText = `${ageNext} Years`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Monthly Pension (Full)</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Basic Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
-            <div class="data-row"><span>Residuary Pension<div><small>DR applied on Full Pension</small></div></span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
-            <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(lumpSum)}</span></div>
-            <div class="data-row"><span>Total Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
-            <div class="data-row"><span>Withheld Gratuity</span><span>${formatIndianCurrency(withheld)}</span></div>
-            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
+            <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
+            <div class="data-row"><span>Commuted Value [Lump sum]</span><span>${formatIndianCurrency(lumpSum)}</span></div>
+            <div class="data-row bold-row"><span>Net Gratuity</span><span>${formatIndianCurrency(totalGrat)}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
@@ -325,10 +336,13 @@
         `;
 
         document.getElementById('partC').innerHTML = `
-            <div class="data-row"><span>EL Encash (${elDays}d)</span><span>${formatIndianCurrency(elEncash)}</span></div>
-            <div class="data-row"><span>HPL Encash (${hplDays}d)</span><span>${formatIndianCurrency(hplEncash)}</span></div>
-            <div class="data-row bold-row"><span>Total Encashment</span><span>${formatIndianCurrency(elEncash + hplEncash)}</span></div>
+            <div class="data-row"><span>Encashment EL (${elDays}d)</span><span>${formatIndianCurrency(elEncashAmt)}</span></div>
+            <div class="data-row"><span>Encashment HPL (${hplDaysToEncash}d)</span><span>${formatIndianCurrency(hplEncashAmt)}</span></div>
+            <div class="data-row bold-row"><span>Total Payable</span><span>${formatIndianCurrency(elEncashAmt + hplEncashAmt)}</span></div>
         `;
+
+        // Automatically toggle watermark based on rule adherence for this conceptual demo
+        if (pensionBefore < 9000) { document.getElementById('watermarkText').style.display = 'block'; } else { document.getElementById('watermarkText').style.display = 'none'; }
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
