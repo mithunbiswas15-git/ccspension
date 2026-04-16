@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pensionary Benefits & Leave Encashment Calculator</title>
+    
+    <title>CCS Pension Calculator 2021 | Central Government India | Mithun Biswas</title>
+    <meta name="title" content="CCS Pension Calculator 2021 | Central Government India">
+    <meta name="description" content="Calculate Pensionary Benefits, Gratuity, and Leave Encashment for Central Government Employees based on CCS Pension Rules 2021. Verified tool by Mithun Biswas, Mumbai GST.">
+    <meta name="keywords" content="CCS Pension Calculator 2021, Central Government Pension India, Gratuity Calculator 7th CPC, Leave Encashment Calculator, Pension Cell Mumbai GST, Mithun Biswas">
+    <meta name="author" content="Mithun Biswas">
+    <link rel="canonical" href="https://your-pension-calc.vercel.app/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-pension-calc.vercel.app/">
+    <meta property="og:title" content="CCS Pension Calculator 2021 | Central Government India">
+    <meta property="og:description" content="Official Pension & Gratuity Calculation tool for Indian Civil Services.">
+    <meta property="og:image" content="https://i.ibb.co/67zy86JN/pension-calculator.jpg">
+
     <style>
         :root {
             --primary-brown: #723e31;
@@ -32,7 +45,6 @@
             position: relative; 
         }
 
-        /* --- Desktop Header --- */
         .top-nav { 
             display: flex; 
             flex-direction: column;
@@ -73,7 +85,6 @@
         .header-title { text-align: center; margin: 20px 0; }
         .header-title h1 { font-size: 1.3rem; color: #111; font-weight: 700; }
 
-        /* --- Desktop Grid --- */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -97,23 +108,14 @@
         }
         .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* --- Mobile Optimization (Phone View) --- */
         @media (max-width: 768px) {
-            .container { padding: 15px; border-radius: 10px; }
-            .logo { position: static; text-align: center; margin-bottom: 10px; }
+            .logo { position: static; text-align: center; }
             .print-link { position: static; justify-content: center; margin-top: 10px; }
-            
-            .grid { grid-template-columns: 1fr; gap: 12px; }
-            .btn-generate { grid-column: span 1; margin-top: 10px; height: 50px; font-size: 1rem; }
-            
-            .summary-grid { grid-template-columns: 1fr 1fr !important; gap: 15px !important; }
-            .benefit-columns { grid-template-columns: 1fr !important; gap: 15px; }
-            
-            .badge-container img { max-width: 140px; }
-            .header-title h1 { font-size: 1.1rem; }
+            .grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr !important; }
+            .benefit-columns { grid-template-columns: 1fr !important; }
         }
 
-        /* Results & Watermark */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); backdrop-filter: blur(8px);
             border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;
@@ -146,14 +148,18 @@
         .footer a { color: var(--official-blue); text-decoration: none; }
         .results-section { display: none; margin-top: 30px; }
 
-        /* Print Logic */
         @media print {
-            body { background: white; padding: 0; -webkit-print-color-adjust: exact; }
-            .container { box-shadow: none; border: none; width: 100%; }
+            body { background: white; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { box-shadow: none; border: none; padding: 0; width: 100%; }
             .btn-generate, .print-link { display: none !important; }
-            .results-section { display: block !important; }
-            .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+            .logo { position: absolute !important; left: 0 !important; top: 10px !important; display: block !important; }
+            .badge-container { display: flex !important; }
+            .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
             input, select { border: 1px solid #ccc !important; font-weight: bold; }
+            .results-section { display: block !important; margin-top: 20px; }
+            .summary-card { border: 1px solid #ccc; background: #fafafa !important; }
+            .benefit-card { border: 1px solid #ccc; page-break-inside: avoid; }
+            .card-title { background: #333 !important; color: white !important; }
         }
     </style>
 </head>
@@ -163,18 +169,18 @@
     <div class="top-nav">
         <div class="logo">CCS<span>PENSION</span></div>
         <div class="badge-container">
-            <img src="https://i.ibb.co/67zy86JN/pension-calculator.jpg" alt="Badge">
+            <img src="https://i.ibb.co/67zy86JN/pension-calculator.jpg" alt="Official CCS Pension Rule 2021 Compliance Badge">
             <div class="badge-caption">Developed by: Mithun Biswas, Pension Cell, Mumbai GST</div>
         </div>
         <div class="print-link" onclick="window.print()">🖨️ Print Report</div>
     </div>
 
     <div class="header-title">
-        <h1>Pensionary Benefits & Leave Encashment Calculator</h1>
+        <h1>CCS Pensionary Benefits & Leave Encashment Calculator (Rules 2021)</h1>
     </div>
 
     <div class="grid">
-        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Name"></div>
+        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Full Name"></div>
         <div class="input-group"><label>Retirement Type</label>
             <select id="retType" onchange="calculateDefaultDOR()">
                 <option value="Superannuation">Superannuation</option>
@@ -322,6 +328,8 @@
             <div class="data-row"><span>HPL Encash</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
             <div class="data-row bold-row"><span>Total</span><span>${formatIndianCurrency(((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
         `;
+
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
     window.onload = calculateDefaultDOR;
 </script>
