@@ -95,6 +95,8 @@
         
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
+        
+        /* Date inputs styled to handle text-masking for dd.mm.yyyy */
         input, select { 
             width: 100%; 
             padding: 10px; 
@@ -183,8 +185,6 @@
                 background: #fff !important; 
                 font-weight: bold !important;
                 color: black !important;
-                -webkit-appearance: none;
-                appearance: none;
             }
             .btn-generate, .print-link { display: none !important; }
             .results-section { display: block !important; margin-top: 20px; }
@@ -220,14 +220,14 @@
                 <option value="Compulsory Retirement">Compulsory Retirement</option>
             </select>
         </div>
-        <div class="input-group"><label>Date of Birth</label><input type="date" id="dob" value="1965-10-03" onchange="calculateDefaultDOR()"></div>
-        <div class="input-group"><label>Date of Entry</label><input type="date" id="doj" value="1995-01-01"></div>
+        <div class="input-group"><label>Date of Birth</label><input type="text" id="dob" placeholder="dd.mm.yyyy" value="01.01.1967" onchange="calculateDefaultDOR()"></div>
+        <div class="input-group"><label>Date of Entry</label><input type="text" id="doj" placeholder="dd.mm.yyyy" value="01.01.1996"></div>
         
-        <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
+        <div class="input-group"><label>Date of Retirement</label><input type="text" id="dor" placeholder="dd.mm.yyyy"></div>
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
         <div class="input-group"><label>Commutation Opted (%)</label>
-            <input type="number" id="commPercent" value="40" min="0" max="40">
+            <input type="number" id="commPercent" value="0" min="0" max="40">
         </div>
         
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
@@ -285,6 +285,24 @@
         80: 4.784, 81: 4.581
     };
 
+    // Helper to parse dd.mm.yyyy into Date Object
+    function parseCustomDate(str) {
+        if (!str) return null;
+        const parts = str.split('.');
+        if (parts.length !== 3) return null;
+        // Month is 0-indexed in JS Date
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
+    // Helper to format Date Object to dd.mm.yyyy
+    function formatCustomDate(dateObj) {
+        if (!dateObj || isNaN(dateObj.getTime())) return "";
+        let d = dateObj.getDate();
+        let m = dateObj.getMonth() + 1;
+        let y = dateObj.getFullYear();
+        return (d < 10 ? '0' + d : d) + '.' + (m < 10 ? '0' + m : m) + '.' + y;
+    }
+
     function formatIndianCurrency(num) {
         let x = Math.round(Math.abs(num)).toString();
         let lastThree = x.substring(x.length - 3);
@@ -294,33 +312,40 @@
     }
 
     function calculateDefaultDOR() {
-        const dobInput = document.getElementById('dob').value;
-        if (!dobInput) return;
-        const dob = new Date(dobInput);
+        const dobStr = document.getElementById('dob').value;
+        const dob = parseCustomDate(dobStr);
+        if (!dob) return;
+        
         const retType = document.getElementById('retType').value;
         if (retType === "Superannuation") {
             let retYear = dob.getFullYear() + 60;
             let retMonth = dob.getMonth();
+            
+            // Rule: If born on 1st, retire on last day of previous month
             if (dob.getDate() === 1) {
                 retMonth -= 1;
                 if (retMonth < 0) { retMonth = 11; retYear -= 1; }
             }
-            const lastDay = new Date(retYear, retMonth + 1, 0).getDate();
-            document.getElementById('dor').value = `${retYear}-${String(retMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+            
+            const dorDate = new Date(retYear, retMonth + 1, 0);
+            document.getElementById('dor').value = formatCustomDate(dorDate);
         }
     }
 
     function generateReport() {
         const basic = parseInt(document.getElementById('basicPay').value) || 0;
         const daRate = parseInt(document.getElementById('daPercent').value) || 0;
-        const doj = new Date(document.getElementById('doj').value);
-        const dob = new Date(document.getElementById('dob').value);
-        const dor = new Date(document.getElementById('dor').value);
+        
+        const dob = parseCustomDate(document.getElementById('dob').value);
+        const doj = parseCustomDate(document.getElementById('doj').value);
+        const dor = parseCustomDate(document.getElementById('dor').value);
+        
         const commP = parseInt(document.getElementById('commPercent').value) || 0;
         const retType = document.getElementById('retType').value;
+        const govtAcc = document.getElementById('govtAcc').value;
 
-        if (basic <= 0 || isNaN(doj.getTime()) || isNaN(dor.getTime())) { 
-            alert("Please provide valid Pay and Dates."); return; 
+        if (basic <= 0 || !dob || !dor) { 
+            alert("Please provide valid Pay and Dates (dd.mm.yyyy)."); return; 
         }
 
         let start = new Date(doj);
@@ -345,7 +370,7 @@
         const factor = commutationTable[ageNext] || 0;
         const lumpSum = Math.ceil(commAmt * 12 * factor);
         const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
-        const withheld = document.getElementById('govtAcc').value === "Yes" ? Math.round(totalGrat * 0.1) : 0;
+        const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
 
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
         const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
@@ -381,7 +406,11 @@
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
-    window.onload = calculateDefaultDOR;
+    
+    // Set initial DOR on load
+    window.onload = function() {
+        calculateDefaultDOR();
+    };
 </script>
 </body>
 </html>
