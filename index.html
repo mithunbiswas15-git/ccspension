@@ -6,6 +6,7 @@
     
     <title>CCS Pension Calculator 2021 | Central Government India | Mithun Biswas</title>
     <meta name="description" content="Calculate Pensionary Benefits, Gratuity, and Leave Encashment for Central Government Employees based on CCS Pension Rules 2021. Verified tool by Mithun Biswas.">
+    <meta name="keywords" content="CCS Pension Calculator 2021, Central Government Pension India, Gratuity Calculator 7th CPC, Mumbai GST">
     
     <style>
         :root {
@@ -74,11 +75,25 @@
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
         
-        /* Force DD.MM.YYYY Display in browser supporting it */
+        /* DATE FORMATTING TRICK FOR MOBILE & DESKTOP */
         input[type="date"] {
             position: relative;
+            min-height: 45px;
         }
-        
+
+        /* Create a custom display overlay for the date */
+        input[type="date"]::before {
+            content: attr(data-display);
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            width: 80%;
+            pointer-events: none;
+            font-size: 1rem;
+        }
+
         input, select { 
             width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; 
             box-sizing: border-box; font-size: 1rem; background-color: #ffffff !important;
@@ -91,9 +106,17 @@
             font-weight: 700; cursor: pointer; font-size: 0.9rem;
             transition: 0.2s; height: 45px; align-self: end;
         }
-        .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* --- Results Card & Watermark --- */
+        /* --- Mobile Optimization --- */
+        @media (max-width: 768px) {
+            .logo { position: static; text-align: center; margin-bottom: 10px; }
+            .print-link { position: static; justify-content: center; margin-top: 10px; }
+            .grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr !important; }
+            .benefit-columns { grid-template-columns: 1fr !important; }
+        }
+
+        /* Results section */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); border-radius: 12px; 
             border: 1px solid #e2e8f0; margin-bottom: 30px;
@@ -113,7 +136,6 @@
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
         .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.9rem; }
-        
         .title-a { background-color: var(--pension-clay); }
         .title-b { background-color: var(--family-sand); color: #723e31; }
         .title-c { background-color: var(--official-blue); }
@@ -122,41 +144,18 @@
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
-        /* --- Rule Reference Section for SEO --- */
-        .rules-reference { 
-            margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; 
-            font-size: 0.85rem; color: #555; line-height: 1.6;
-        }
-        .rules-reference h3 { color: #333; font-size: 1rem; margin-bottom: 10px; }
-        .rules-reference ul { padding-left: 20px; }
-
+        .rules-reference { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; font-size: 0.85rem; color: #555; }
         .footer { text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 40px; font-weight: 600; line-height: 1.6; }
         .footer a { color: var(--official-blue); text-decoration: none; }
-        
         .results-section { display: none; margin-top: 30px; }
 
-        /* --- Mobile Optimization --- */
-        @media (max-width: 768px) {
-            .logo { position: static; text-align: center; }
-            .print-link { position: static; justify-content: center; margin-top: 10px; }
-            .grid { grid-template-columns: 1fr; }
-            .summary-grid { grid-template-columns: 1fr 1fr !important; }
-            .benefit-columns { grid-template-columns: 1fr !important; }
-        }
-
-        /* --- Print Optimization --- */
         @media print {
             body { background: white; padding: 0; -webkit-print-color-adjust: exact; }
             .btn-generate, .print-link { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; }
             .logo { position: absolute !important; left: 0 !important; }
-            /* Show actual date text instead of the picker UI */
-            input[type="date"]::before {
-                content: attr(data-date);
-                width: 100%;
-            }
-            input[type="date"]::-webkit-inner-spin-button,
-            input[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
+            input[type="date"]::before { content: attr(data-display); background: transparent; }
+            input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
         }
     </style>
 </head>
@@ -186,9 +185,15 @@
             </select>
         </div>
         
-        <div class="input-group"><label>Date of Birth</label><input type="date" id="dob" value="1967-01-01" onchange="calculateDefaultDOR()"></div>
-        <div class="input-group"><label>Date of Entry</label><input type="date" id="doj" value="1996-01-01"></div>
-        <div class="input-group"><label>Date of Retirement</label><input type="date" id="dor"></div>
+        <div class="input-group"><label>Date of Birth</label>
+            <input type="date" id="dob" value="1967-01-01" onchange="updateDisplayFormat(this); calculateDefaultDOR()">
+        </div>
+        <div class="input-group"><label>Date of Entry</label>
+            <input type="date" id="doj" value="1996-01-01" onchange="updateDisplayFormat(this)">
+        </div>
+        <div class="input-group"><label>Date of Retirement</label>
+            <input type="date" id="dor" onchange="updateDisplayFormat(this)">
+        </div>
         
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
@@ -229,11 +234,6 @@
             </div>
         </div>
     </div>
-
-    <div class="rules-reference">
-        <h3>Calculation Basis & Statutory References</h3>
-        <p>This tool is specifically designed for <strong>Central Government Employees</strong> in India. Calculations are governed by the <strong>CCS (Pension) Rules, 2021</strong>. All calculations, including <strong>Gratuity</strong>, <strong>Commutation</strong>, and <strong>Leave Encashment</strong>, are strictly based on the latest 7th Pay Commission directives.</p>
-    </div>
 </div>
 
 <div class="footer">
@@ -244,11 +244,14 @@
 <script>
     const commutationTable = { 20: 9.188, 21: 9.187, 22: 9.186, 23: 9.185, 24: 9.184, 25: 9.183, 26: 9.182, 27: 9.180, 28: 9.178, 29: 9.176, 30: 9.173, 31: 9.169, 32: 9.164, 33: 9.159, 34: 9.152, 35: 9.145, 36: 9.145, 37: 9.126, 38: 9.116, 39: 9.103, 40: 9.090, 41: 9.075, 42: 9.059, 43: 9.040, 44: 9.019, 45: 8.996, 46: 8.971, 47: 8.943, 48: 8.913, 49: 8.881, 50: 8.846, 51: 8.808, 52: 8.768, 53: 8.724, 54: 8.678, 55: 8.627, 56: 8.572, 57: 8.512, 58: 8.446, 59: 8.371, 60: 8.287, 61: 8.194, 62: 8.093, 63: 7.982, 64: 7.862, 65: 7.731, 66: 7.591, 67: 7.431, 68: 7.262, 69: 7.083, 70: 6.897, 71: 6.701, 72: 6.499, 73: 6.289, 74: 6.075, 75: 5.857, 76: 5.638, 77: 5.421, 78: 5.205, 79: 4.993, 80: 4.784, 81: 4.581 };
 
-    // Function to format Date Object to dd.mm.yyyy for printing/summary
-    function formatToIndian(dateStr) {
-        if(!dateStr) return "";
-        const [y, m, d] = dateStr.split('-');
-        return `${d}.${m}.${y}`;
+    // Function to force dd.mm.yyyy visual display
+    function updateDisplayFormat(input) {
+        if (!input.value) {
+            input.setAttribute('data-display', '');
+            return;
+        }
+        const [y, m, d] = input.value.split('-');
+        input.setAttribute('data-display', `${d}.${m}.${y}`);
     }
 
     function formatIndianCurrency(num) {
@@ -272,21 +275,25 @@
                 if (retMonth < 0) { retMonth = 11; retYear -= 1; }
             }
             const dorDate = new Date(retYear, retMonth + 1, 0);
-            // Internal value must be yyyy-mm-dd
-            document.getElementById('dor').value = dorDate.toISOString().split('T')[0];
+            const dorInput = document.getElementById('dor');
+            dorInput.value = dorDate.toISOString().split('T')[0];
+            updateDisplayFormat(dorInput);
         }
     }
 
     function generateReport() {
         const basic = parseInt(document.getElementById('basicPay').value) || 0;
         const daRate = parseInt(document.getElementById('daPercent').value) || 0;
-        const dob = new Date(document.getElementById('dob').value);
-        const doj = new Date(document.getElementById('doj').value);
-        const dor = new Date(document.getElementById('dor').value);
-        const commP = parseInt(document.getElementById('commPercent').value) || 0;
-        const govtAcc = document.getElementById('govtAcc').value;
+        const dobVal = document.getElementById('dob').value;
+        const dojVal = document.getElementById('doj').value;
+        const dorVal = document.getElementById('dor').value;
 
-        if (basic <= 0 || isNaN(dob) || isNaN(dor)) { alert("Select valid dates using the calendar."); return; }
+        if (basic <= 0 || !dobVal || !dorVal) { alert("Please select all required dates."); return; }
+
+        const dob = new Date(dobVal);
+        const doj = new Date(dojVal);
+        const dor = new Date(dorVal);
+        const commP = parseInt(document.getElementById('commPercent').value) || 0;
 
         let start = new Date(doj); let inclusiveEnd = new Date(dor); inclusiveEnd.setDate(inclusiveEnd.getDate() + 1);
         let yrs = inclusiveEnd.getFullYear() - start.getFullYear();
@@ -305,10 +312,6 @@
         let ageNext = Math.max(document.getElementById('retType').value === "Superannuation" ? 61 : 0, ageRet + 1);
 
         const factor = commutationTable[ageNext] || 0;
-        const totalGrat = Math.round(Math.min(2500000, (emoluments / 4) * periods));
-        const withheld = govtAcc === "Yes" ? Math.round(totalGrat * 0.1) : 0;
-        const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
-        const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
 
         document.getElementById('results').style.display = "block";
         document.getElementById('resName').innerText = document.getElementById('name').value || 'N/A';
@@ -317,11 +320,10 @@
         document.getElementById('resAgeNext').innerText = `${ageNext}y`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
-            <div class="data-row"><span>Lump Sum Commutation</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
-            <div class="data-row bold-row"><span>Net Payable Gratuity</span><span>${formatIndianCurrency(totalGrat - withheld)}</span></div>
+            <div class="data-row"><span>Commutation Lumpsum</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
         `;
 
         document.getElementById('partB').innerHTML = `
@@ -329,15 +331,24 @@
             <div class="data-row"><span>Ordinary Rate</span><span>${formatIndianCurrency(Math.max(9000, basic * 0.3))}</span></div>
         `;
 
+        const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
+        const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
+        const totalEncash = ((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays;
+
         document.getElementById('partC').innerHTML = `
-            <div class="data-row"><span>EL Encashment</span><span>${formatIndianCurrency((emoluments/30)*elDays)}</span></div>
-            <div class="data-row"><span>HPL Encashment</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
-            <div class="data-row bold-row"><span>Total Encashment</span><span>${formatIndianCurrency(((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
+            <div class="data-row"><span>EL (${elDays} days)</span><span>${formatIndianCurrency((emoluments/30)*elDays)}</span></div>
+            <div class="data-row"><span>HPL (${hplDays} days)</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
+            <div class="data-row bold-row"><span>Total Payable</span><span>${formatIndianCurrency(totalEncash)}</span></div>
         `;
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
-    window.onload = calculateDefaultDOR;
+
+    // Initialize display values for defaults
+    window.onload = function() {
+        document.querySelectorAll('input[type="date"]').forEach(input => updateDisplayFormat(input));
+        calculateDefaultDOR();
+    };
 </script>
 </body>
 </html>
