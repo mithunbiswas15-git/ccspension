@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>CCS Pension Calculator 2021 | Central Government India | Mithun Biswas</title>
-    <meta name="title" content="CCS Pension Calculator 2021 | Central Government India">
     <meta name="description" content="Calculate Pensionary Benefits, Gratuity, and Leave Encashment for Central Government Employees based on CCS Pension Rules 2021. Verified tool by Mithun Biswas.">
-    <meta name="keywords" content="CCS Pension Calculator 2021, Central Government Pension India, Gratuity Calculator 7th CPC, Leave Encashment Calculator, Pension Cell Mumbai GST, Mithun Biswas">
     <meta name="author" content="Mithun Biswas">
 
     <style>
@@ -68,7 +66,7 @@
         .header-title { text-align: center; margin: 20px 0; }
         .header-title h1 { font-size: 1.3rem; color: #111; font-weight: 700; }
 
-        /* --- Input Grid --- */
+        /* --- Input Grid (PC Style) --- */
         .grid { 
             display: grid; grid-template-columns: repeat(4, 1fr); 
             gap: 15px; margin-bottom: 20px; 
@@ -77,7 +75,6 @@
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
         
-        /* Date formatting strictly dd.mm.yyyy for mobile and desktop */
         input[type="date"] { position: relative; min-height: 45px; }
         input[type="date"]::before {
             content: attr(data-display);
@@ -99,7 +96,7 @@
         }
         .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* --- Results Card & Watermark --- */
+        /* --- Results & Benefit Cards --- */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); border-radius: 12px; 
             border: 1px solid #e2e8f0; margin-bottom: 30px;
@@ -128,18 +125,12 @@
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
-        .rules-reference { 
-            margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; 
-            font-size: 0.85rem; color: #555; line-height: 1.6;
-        }
-        .rules-reference h3 { color: #333; font-size: 1rem; margin-bottom: 10px; }
-
         .footer { text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 40px; font-weight: 600; line-height: 1.6; }
         .footer a { color: var(--official-blue); text-decoration: none; }
         
         .results-section { display: none; margin-top: 30px; }
 
-        /* --- Mobile Optimization --- */
+        /* --- Mobile Responsive (Non-Print) --- */
         @media (max-width: 768px) {
             .logo { position: static; text-align: center; margin-bottom: 10px; }
             .print-link { position: static; justify-content: center; margin-top: 10px; }
@@ -148,14 +139,32 @@
             .benefit-columns { grid-template-columns: 1fr !important; }
         }
 
-        /* --- Print Optimization --- */
+        /* --- PRINT LAYOUT: Strictly Maintain PC Style --- */
         @media print {
-            body { background: white; padding: 0; -webkit-print-color-adjust: exact; }
-            .btn-generate, .print-link { display: none !important; }
-            .container { box-shadow: none; border: none; width: 100%; }
-            .logo { position: absolute !important; left: 0 !important; }
+            body { background: white; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            
+            /* Maintain Header Layout */
+            .top-nav { border-bottom: 1px solid #eee; padding-bottom: 15px; display: flex !important; flex-direction: column !important; align-items: center !important; position: relative !important; }
+            .logo { position: absolute !important; left: 0 !important; top: 10px !important; display: block !important; }
+            .badge-container { display: block !important; }
+            .print-link, .btn-generate { display: none !important; }
+
+            /* Maintain 4-Column PC Grid */
+            .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
+            input, select { border: 1px solid #ccc !important; background: #fff !important; color: black !important; -webkit-appearance: none; appearance: none; }
             input[type="date"]::before { content: attr(data-display); background: transparent; }
-            input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
+
+            /* Maintain Results Section */
+            .results-section { display: block !important; margin-top: 20px; }
+            
+            /* Maintain 3-Column Benefits */
+            .benefit-columns { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 15px !important; }
+            .benefit-card { border: 1px solid #ccc; page-break-inside: avoid; }
+            .card-title { background-color: #444 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            
+            .summary-card { border: 1px solid #ccc; background: #fafafa !important; }
+            .summary-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
         }
     </style>
 </head>
@@ -176,7 +185,7 @@
     </div>
 
     <div class="grid">
-        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Full Name"></div>
+        <div class="input-group"><label>Retiree Name</label><input type="text" id="name" placeholder="Name"></div>
         <div class="input-group"><label>Retirement Type</label>
             <select id="retType" onchange="calculateDefaultDOR()">
                 <option value="Superannuation">Superannuation</option>
@@ -197,7 +206,7 @@
         
         <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
         <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
-        <div class="input-group"><label>Commutation Opted (%)</label><input type="number" id="commPercent" value="0" min="0" max="40"></div>
+        <div class="input-group"><label>Commutation %</label><input type="number" id="commPercent" value="0" min="0" max="40"></div>
         <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
         <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
         <div class="input-group"><label>Govt. Accommodation</label>
@@ -233,11 +242,6 @@
                 <div class="card-content" id="partC"></div>
             </div>
         </div>
-    </div>
-
-    <div class="rules-reference">
-        <h3>Calculation Basis & Statutory References</h3>
-        <p>This calculation tool follows the <strong>CCS (Pension) Rules, 2021</strong> and the latest directives of the <strong>7th Pay Commission</strong> for Indian Central Government employees.</p>
     </div>
 </div>
 
@@ -283,12 +287,12 @@
         const basic = parseInt(document.getElementById('basicPay').value) || 0;
         const daRate = parseInt(document.getElementById('daPercent').value) || 0;
         const dobVal = document.getElementById('dob').value;
-        const dojVal = document.getElementById('doj').value;
         const dorVal = document.getElementById('dor').value;
 
-        if (basic <= 0 || !dobVal || !dorVal) { alert("Please complete the form."); return; }
+        if (basic <= 0 || !dobVal || !dorVal) { alert("Check Pay and Dates."); return; }
 
-        const dob = new Date(dobVal); const doj = new Date(dojVal); const dor = new Date(dorVal);
+        const dob = new Date(dobVal); const dor = new Date(dorVal);
+        const doj = new Date(document.getElementById('doj').value);
         const commP = parseInt(document.getElementById('commPercent').value) || 0;
         const govtAcc = document.getElementById('govtAcc').value;
 
@@ -316,10 +320,10 @@
         document.getElementById('resAgeNext').innerText = `${ageNext}y`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
-            <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
-            <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
-            <div class="data-row"><span>Commutation Lumpsum</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
+            <div class="data-row"><span>Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Commutation</span><span>${formatIndianCurrency(commAmt)}</span></div>
+            <div class="data-row"><span>Residuary</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
+            <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
             <div class="data-row bold-row"><span>Gratuity</span><span>${formatIndianCurrency(Math.round(Math.min(2500000, (emoluments/4)*periods)))}</span></div>
         `;
 
@@ -330,11 +334,12 @@
 
         const elDays = Math.min(300, parseInt(document.getElementById('elBalance').value) || 0);
         const hplDays = Math.min(300 - elDays, parseInt(document.getElementById('hplBalance').value) || 0);
+        const totalEncash = ((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays;
 
         document.getElementById('partC').innerHTML = `
-            <div class="data-row"><span>EL Encash</span><span>${formatIndianCurrency((emoluments/30)*elDays)}</span></div>
-            <div class="data-row"><span>HPL Encash</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
-            <div class="data-row bold-row"><span>Total</span><span>${formatIndianCurrency(((emoluments/30)*elDays) + (((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
+            <div class="data-row"><span>EL (${elDays}d)</span><span>${formatIndianCurrency((emoluments/30)*elDays)}</span></div>
+            <div class="data-row"><span>HPL (${hplDays}d)</span><span>${formatIndianCurrency((((basic/2)+((basic/2)*daRate/100))/30)*hplDays)}</span></div>
+            <div class="data-row bold-row"><span>Total</span><span>${formatIndianCurrency(totalEncash)}</span></div>
         `;
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
