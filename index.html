@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>CCS Pension Calculator 2021 | Central Government India | Mithun Biswas</title>
+    <meta name="title" content="CCS Pension Calculator 2021 | Central Government India">
     <meta name="description" content="Calculate Pensionary Benefits, Gratuity, and Leave Encashment for Central Government Employees based on CCS Pension Rules 2021. Verified tool by Mithun Biswas.">
-    
+    <meta name="keywords" content="CCS Pension Calculator 2021, Central Government Pension India, Gratuity Calculator 7th CPC, Leave Encashment Calculator, Pension Cell Mumbai GST, Mithun Biswas">
+    <meta name="author" content="Mithun Biswas">
+
     <style>
         :root {
             --primary-brown: #723e31;
@@ -35,7 +38,7 @@
             position: relative; 
         }
 
-        /* --- Header & Badge --- */
+        /* --- Header & Badge Alignment --- */
         .top-nav { 
             display: flex; 
             flex-direction: column;
@@ -74,7 +77,7 @@
         .input-group { grid-column: span 1; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
         
-        /* Date formatting for consistency */
+        /* Date formatting strictly dd.mm.yyyy for mobile and desktop */
         input[type="date"] { position: relative; min-height: 45px; }
         input[type="date"]::before {
             content: attr(data-display);
@@ -94,20 +97,9 @@
             font-weight: 700; cursor: pointer; font-size: 0.9rem;
             transition: 0.2s; height: 45px; align-self: end;
         }
+        .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Quick Links Section */
-        .quick-links {
-            margin: 30px 0;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 5px solid var(--official-blue);
-        }
-        .quick-links h3 { font-size: 1rem; margin-top: 0; color: var(--official-blue); }
-        .link-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--primary-brown); text-decoration: none; }
-        .link-item:hover { text-decoration: underline; }
-
-        /* --- Results section --- */
+        /* --- Results Card & Watermark --- */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); border-radius: 12px; 
             border: 1px solid #e2e8f0; margin-bottom: 30px;
@@ -127,6 +119,7 @@
         .benefit-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .benefit-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
         .card-title { padding: 10px 15px; color: white; font-weight: 700; font-size: 0.9rem; }
+        
         .title-a { background-color: var(--pension-clay); }
         .title-b { background-color: var(--family-sand); color: #723e31; }
         .title-c { background-color: var(--official-blue); }
@@ -135,11 +128,18 @@
         .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
         .bold-row { background-color: #f8fafc; margin: 5px -15px 0 -15px; padding: 12px 15px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
-        .rules-reference { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        .rules-reference { 
+            margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; 
+            font-size: 0.85rem; color: #555; line-height: 1.6;
+        }
+        .rules-reference h3 { color: #333; font-size: 1rem; margin-bottom: 10px; }
+
         .footer { text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 40px; font-weight: 600; line-height: 1.6; }
         .footer a { color: var(--official-blue); text-decoration: none; }
+        
         .results-section { display: none; margin-top: 30px; }
 
+        /* --- Mobile Optimization --- */
         @media (max-width: 768px) {
             .logo { position: static; text-align: center; margin-bottom: 10px; }
             .print-link { position: static; justify-content: center; margin-top: 10px; }
@@ -148,12 +148,14 @@
             .benefit-columns { grid-template-columns: 1fr !important; }
         }
 
+        /* --- Print Optimization --- */
         @media print {
             body { background: white; padding: 0; -webkit-print-color-adjust: exact; }
-            .btn-generate, .print-link, .quick-links { display: none !important; }
+            .btn-generate, .print-link { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; }
             .logo { position: absolute !important; left: 0 !important; }
             input[type="date"]::before { content: attr(data-display); background: transparent; }
+            input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
         }
     </style>
 </head>
@@ -217,15 +219,6 @@
             </div>
         </div>
 
-<div class="quick-links">
-    <h3>Retiree Quick Links</h3>
-    <a href="https://cpao.nic.in/Pensioner/ppo_status.php" 
-       target="_blank" 
-       rel="noreferrer" 
-       class="link-item">
-        🔍 Check PPO Status (CPAO Official)
-    </a>
-</div>
         <div class="benefit-columns">
             <div class="benefit-card">
                 <div class="card-title title-a">Part-A: Pensionary Benefits</div>
@@ -244,7 +237,7 @@
 
     <div class="rules-reference">
         <h3>Calculation Basis & Statutory References</h3>
-        <p>This tool is based on <strong>CCS (Pension) Rules, 2021</strong>. Data is verified for <strong>7th Pay Commission</strong> scales and gratuity ceilings.</p>
+        <p>This calculation tool follows the <strong>CCS (Pension) Rules, 2021</strong> and the latest directives of the <strong>7th Pay Commission</strong> for Indian Central Government employees.</p>
     </div>
 </div>
 
@@ -323,7 +316,7 @@
         document.getElementById('resAgeNext').innerText = `${ageNext}y`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
             <div class="data-row"><span>Commutation Lumpsum</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
