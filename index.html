@@ -33,26 +33,49 @@
             position: relative; 
         }
 
+        /* --- Header Centering Logic --- */
         .top-nav { 
             display: flex; 
-            flex-direction: column;
+            justify-content: center; /* Strictly center the content */
             align-items: center;
             margin-bottom: 15px; 
             border-bottom: 1px solid #eee; 
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             position: relative;
+            min-height: 120px;
         }
 
-        .logo { position: absolute; left: 0; top: 10px; font-weight: 800; font-size: 1.4rem; color: #333; }
+        .logo { 
+            position: absolute; 
+            left: 0; 
+            top: 20px; 
+            font-weight: 800; 
+            font-size: 1.4rem; 
+            color: #333; 
+        }
         .logo span { color: var(--primary-brown); }
 
-        .badge-container img { max-width: 160px; height: auto; }
-        .badge-caption { font-size: 0.85rem; color: var(--primary-brown); margin-top: 5px; font-weight: 700; }
+        .badge-container { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 2;
+        }
+        .badge-container img { max-width: 160px; height: auto; display: block; margin: 0 auto; }
+        .badge-caption { font-size: 0.85rem; color: var(--primary-brown); margin-top: 8px; font-weight: 700; }
 
         .print-link { 
-            position: absolute; right: 0; top: 15px;
-            color: var(--official-blue); text-decoration: none; 
-            font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; 
+            position: absolute; 
+            right: 0; 
+            top: 25px;
+            color: var(--official-blue); 
+            text-decoration: none; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            cursor: pointer; 
         }
 
         .header-title { text-align: center; margin: 15px 0; }
@@ -76,7 +99,6 @@
             transition: 0.2s; height: 40px; align-self: end;
         }
 
-        /* Results & Watermark */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); border-radius: 12px; 
             border: 1px solid #e2e8f0; margin-bottom: 20px;
@@ -114,30 +136,29 @@
             @page { size: A4; margin: 10mm; }
             body { background: white; padding: 0; font-size: 10pt; -webkit-print-color-adjust: exact; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            
+            /* Center Badge in Print */
+            .top-nav { display: flex !important; justify-content: center !important; position: relative !important; min-height: 100px !important; }
+            .logo { position: absolute !important; left: 0 !important; top: 10px !important; font-size: 14pt !important; }
+            .badge-container img { max-width: 130px !important; margin: 0 auto !important; }
+            .badge-caption { font-size: 9pt !important; }
             .print-link, .btn-generate { display: none !important; }
-            
-            .logo { position: absolute !important; left: 0 !important; font-size: 14pt !important; }
-            .badge-container img { max-width: 130px !important; }
-            
+
             .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
             input, select { border: 1px solid #ddd !important; font-size: 9pt !important; padding: 6px !important; }
-            
             input[type="date"] { display: none !important; }
             .print-date-val { display: block !important; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-weight: bold; background: white; font-size: 9pt; }
 
             .benefit-columns { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
-            .benefit-card { border: 1px solid #ddd; }
-            .card-title { font-size: 9pt !important; padding: 6px !important; }
-            .data-row { font-size: 8.5pt !important; padding: 4px 0 !important; }
-            
-            .summary-card { border: 1px solid #ddd; }
-            .summary-grid { gap: 10px !important; padding: 10px !important; }
-            .summary-item div { font-size: 9pt !important; }
+            .summary-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+            .card-title { background: #444 !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
 
+        /* Mobile specific adjustments (Non-Print) */
         @media (max-width: 768px) and (not print) {
-            .logo { position: static; text-align: center; }
-            .print-link { position: static; justify-content: center; }
+            .top-nav { flex-direction: column; min-height: auto; padding-top: 40px; }
+            .logo { position: static; text-align: center; margin-bottom: 10px; }
+            .print-link { position: static; justify-content: center; margin-top: 10px; }
             .grid { grid-template-columns: 1fr; }
             .benefit-columns { grid-template-columns: 1fr; }
         }
@@ -306,7 +327,7 @@
         document.getElementById('resAgeNext').innerText = `${ageNext}y`;
 
         document.getElementById('partA').innerHTML = `
-            <div class="data-row"><span>Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
+            <div class="data-row"><span>Monthly Pension</span><span>${formatIndianCurrency(pensionBefore)}</span></div>
             <div class="data-row"><span>Commuted Portion</span><span>${formatIndianCurrency(commAmt)}</span></div>
             <div class="data-row"><span>Residuary Pension</span><span>${formatIndianCurrency(pensionBefore - commAmt)}</span></div>
             <div class="data-row"><span>Commuted Value</span><span>${formatIndianCurrency(Math.ceil(commAmt * 12 * factor))}</span></div>
