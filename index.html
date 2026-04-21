@@ -33,7 +33,7 @@
             position: relative; 
         }
 
-        /* --- Responsive Header --- */
+        /* --- Header Styling --- */
         .top-nav { 
             display: flex; 
             justify-content: center;
@@ -80,7 +80,7 @@
         .header-title { text-align: center; margin: 15px 0; }
         .header-title h1 { font-size: 1.2rem; color: #111; font-weight: 700; line-height: 1.4; }
 
-        /* --- Desktop Grid --- */
+        /* --- Grid Layout --- */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .input-group { grid-column: span 1; position: relative; }
         label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.8rem; color: #444; }
@@ -99,7 +99,7 @@
             transition: 0.2s; height: 45px; align-self: end;
         }
 
-        /* --- Desktop Results Section --- */
+        /* --- Results Styling --- */
         .summary-card { 
             background: rgba(226, 232, 240, 0.4); border-radius: 12px; 
             border: 1px solid #e2e8f0; margin-bottom: 20px;
@@ -128,64 +128,40 @@
         .data-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; font-weight: 500; }
         .bold-row { background-color: #f8fafc; margin: 5px -12px -12px -12px; padding: 10px 12px; font-weight: 700; border-top: 1px solid #e2e8f0; }
 
+        /* --- Footer --- */
         .footer { text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 30px; font-weight: 600; line-height: 1.4; }
         .footer a { color: var(--official-blue); text-decoration: none; }
         .results-section { display: none; margin-top: 20px; }
 
-        /* --- MOBILE OPTIMIZATION (Up to 768px) --- */
+        /* --- MOBILE OPTIMIZATION --- */
         @media screen and (max-width: 768px) {
             .container { padding: 15px; border-radius: 10px; }
-            
-            /* Stack Header Elements */
-            .top-nav { 
-                flex-direction: column; 
-                min-height: auto; 
-                padding-top: 10px; 
-                gap: 15px;
-            }
+            .top-nav { flex-direction: column; min-height: auto; padding-top: 10px; gap: 15px; }
             .logo { position: static; font-size: 1.2rem; }
             .print-link { position: static; font-size: 0.9rem; }
-            
-            /* Header Title */
             .header-title h1 { font-size: 1.1rem; }
-
-            /* Single Column Grid for Inputs */
-            .grid { 
-                grid-template-columns: 1fr; 
-                gap: 10px; 
-            }
-            .btn-generate { 
-                grid-column: span 1; 
-                height: 50px; 
-                margin-top: 10px; 
-            }
-
-            /* Stack Benefit Cards */
+            .grid { grid-template-columns: 1fr; gap: 10px; }
+            .btn-generate { grid-column: span 1; height: 50px; margin-top: 10px; }
             .summary-grid { grid-template-columns: 1fr 1fr; }
             .benefit-columns { grid-template-columns: 1fr; }
-            
-            /* Larger tap targets for mobile */
             input, select { padding: 14px; font-size: 1rem; }
             label { font-size: 0.85rem; }
         }
 
-        /* --- A4 PRINT OPTIMIZATION (Strictly maintains PC layout) --- */
+        /* --- A4 PRINT OPTIMIZATION --- */
         @media print {
             @page { size: A4; margin: 10mm; }
             body { background: white; padding: 0; font-size: 10pt; -webkit-print-color-adjust: exact; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            
             .top-nav { display: flex !important; justify-content: center !important; position: relative !important; min-height: 100px !important; flex-direction: row !important; }
             .logo { position: absolute !important; left: 0 !important; top: 10px !important; font-size: 14pt !important; }
             .badge-container img { max-width: 130px !important; margin: 0 auto !important; }
             .badge-caption { font-size: 9pt !important; }
             .print-link, .btn-generate { display: none !important; }
-
             .grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
             input, select { border: 1px solid #ddd !important; font-size: 9pt !important; padding: 6px !important; }
             input[type="date"] { display: none !important; }
             .print-date-val { display: block !important; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-weight: bold; background: white; font-size: 9pt; }
-
             .benefit-columns { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
             .summary-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
             .card-title { background: #444 !important; color: white !important; -webkit-print-color-adjust: exact; }
@@ -231,15 +207,24 @@
             <div id="dor-print" class="print-date-val">--.--.----</div>
         </div>
         
-        <div class="input-group"><label>Basic Pay (₹)</label><input type="number" id="basicPay" value="0"></div>
-        <div class="input-group"><label>DA Rate (%)</label><input type="number" id="daPercent" value="0"></div>
+        <div class="input-group"><label>Basic Pay (₹)</label>
+            <input type="number" id="basicPay" value="0" step="1" oninput="this.value=Math.round(this.value);">
+        </div>
+        <div class="input-group"><label>DA Rate (%)</label>
+            <input type="number" id="daPercent" value="0" step="1" oninput="this.value=Math.round(this.value);">
+        </div>
         
         <div class="input-group"><label>Commutation % (0-40)</label>
             <input type="number" id="commPercent" value="0" min="0" max="40" step="1" oninput="this.value=Math.round(this.value); if(this.value>40)this.value=40; if(this.value<0)this.value=0;">
         </div>
 
-        <div class="input-group"><label>EL Balance</label><input type="number" id="elBalance" value="0"></div>
-        <div class="input-group"><label>HPL Balance</label><input type="number" id="hplBalance" value="0"></div>
+        <div class="input-group"><label>EL Balance (D.O.R.)</label>
+            <input type="number" id="elBalance" value="0" step="1" oninput="this.value=Math.round(this.value);">
+        </div>
+        <div class="input-group"><label>HPL Balance (D.O.R.)</label>
+            <input type="number" id="hplBalance" value="0" step="1" oninput="this.value=Math.round(this.value);">
+        </div>
+        
         <div class="input-group"><label>Govt. Accommodation</label>
             <select id="govtAcc">
                 <option value="No">No</option><option value="Yes">Yes</option>
